@@ -64,7 +64,7 @@ library(RMySQL)
 install.packages("RSQLite")
 library(RSQLite)
 
-conn = dbConnect(MySQL(), dbname = "", host = '127.0.0.1', user = "root", password = "Ananda2006!!", port = 3306)
+conn = dbConnect(MySQL(), dbname = "baseball", host = '127.0.0.1', user = "root", password = "Ananda2006!!", port = 3306)
 class(conn)
 sc = etl("statcastr", conn, dir = "~/dumps/statcastr")
 sc %>%
