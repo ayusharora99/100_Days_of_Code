@@ -1,7 +1,6 @@
-[dependencies]
-reqwest = "0.9.18"
-
 [package]
 name = "src"
 version = "0.1.0"
 authors = ["Your Name <you@example.com>"]
+[dependencies]
+reqwest = "0.9.20"

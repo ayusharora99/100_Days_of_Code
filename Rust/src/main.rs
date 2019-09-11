@@ -1,4 +1,5 @@
-use reqwest;
+
+extern crate reqwest;
 
 fn main(){
 // Building the URL
