@@ -39,7 +39,7 @@ fn game_day_links (url: &str) -> Vec<String> {
     }
 }
 
-let url = game_day_url("mlb", "2018", "06", "10");
+let url = game_day_url("mlb", "2019", "09", "10");
 let games = game_day_links(&url);
 
 dbg!(games);
