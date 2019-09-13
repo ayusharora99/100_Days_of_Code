@@ -67,7 +67,7 @@ library(RSQLite)
 conn = dbConnect(MySQL(), dbname = "baseball", host = '127.0.0.1', user = "root", password = "Ananda2006!!", port = 3306)
 class(conn)
 sc = etl("statcastr", conn, dir = "~/dumps/statcastr")
-sc %>%
+sc %>% 
   etl_extract(year = 2019, month = 3:9) %>%
   etl_transform() %>%
   etl_load(tablenames = "statcast")
