@@ -1,0 +1,4 @@
+"0","mechanics = Mechanics %>% as.data.frame() %>% tibble::rownames_to_column() %>% flextable()   %>% "
+"0","    theme_booktabs() %>% "
+"0","    autofit() "
+"0","mechanics"

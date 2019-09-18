@@ -1,0 +1,8 @@
+"0","contact <- subset(Spec_SP2, Spec_SP2$PitcherTeam == ""WAK_DEA"")"
+"0","contact <- subset(Spec_SP2, Spec_SP2$ExitSpeed > 0)"
+"0","contact1 <- contact[c(""PlateLocSide"", ""PlateLocHeight"", ""PlayResult"", ""ExitSpeed"", ""BatterSide"")]"
+"0","contact_hit <- subset(contact1, contact1$PlayResult == ""Single"" | contact1$PlayResult == ""Double"" | contact1$PlayResult == ""Triple"" | contact1$PlayResult == ""HomeRun"")"
+"0","contact_hit$event <- 1"
+"0","contact_out <- subset(contact1, contact1$PlayResult == ""Out"")"
+"0","contact_out$event <- 0"
+"0","inPlay <- rbind(contact_out, contact_hit)"

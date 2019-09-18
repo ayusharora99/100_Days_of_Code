@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568839255701.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2004156276",
+    "id" : "DF0138E4",
+    "lastKnownWriteTime" : 1568843534,
+    "last_content_update" : 1568843534731,
+    "path" : "~/Documents/100_Days_of_Code/100_Days_of_Code/Wake_Forest/2020_Template_Lefties.Rmd",
+    "project_path" : "2020_Template_Lefties.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline",
+        "cursorPosition" : "6,19",
+        "last_setup_crc32" : "6F302ADBbb338d19",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

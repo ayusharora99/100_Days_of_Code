@@ -1,0 +1,4 @@
+"0","FB_edge <- (NROW(FB_inbigzone)-NROW(FB_insmallzone))"
+"0","FB_edge_pct <- FB_edge / NROW(fastball)"
+"0","BB_edge <- (NROW(BB_inbigzone)-NROW(BB_insmallzone))"
+"0","BB_edge_pct <- BB_edge / NROW(breaking)"

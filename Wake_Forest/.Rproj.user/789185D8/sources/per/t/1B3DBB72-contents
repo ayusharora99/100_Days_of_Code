@@ -1,0 +1,499 @@
+---
+title: "Scrimmage_Template"
+author: "SD"
+date: "9/17/2019"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+library(flextable)
+library(dplyr)
+library(mgcv)
+library(pitchRx)
+library(caret)
+library(raster)
+library(cowplot)
+library(RColorBrewer)
+library(zoo)
+install.packages('ggplot')
+library(ggplot2)
+kable <-knitr::kable
+```
+
+```{r echo=FALSE, message=FALSE}
+#Start1 <- read.csv("~/Desktop/WFU Baseball/2020/DataSets/Scrimmage914.csv")
+#Start2 <- read_csv("~/Desktop/WFU Baseball/2020/DataSets/Scrimmage915.csv")
+
+Spec_SP1 = Adler_914
+
+Spec_SP <- subset(Spec_SP1, Spec_SP1$Pitcher == "Adler, Eric")
+Spec_SP <- Spec_SP[c("TaggedPitchType", "PitchCall", "RelSpeed", "SpinRate", "VertBreak", "InducedVertBreak","HorzBreak","PlateLocHeight","PlateLocSide", "SpinAxis", "ExitSpeed", "Angle", "BatterSide", "RelHeight", "RelSide", "pfxx", "pfxz")]
+Spec_SP$PitchNumber <- 1:nrow(Spec_SP)
+
+fastball <- subset(Spec_SP, Spec_SP$TaggedPitchType == "Fastball" | Spec_SP$TaggedPitchType == "Cutter"| Spec_SP$TaggedPitchType == "Sinker")
+fastball <- fastball[!is.na(fastball$SpinRate),]
+breaking <- subset(Spec_SP, Spec_SP$TaggedPitchType == "Curveball" | Spec_SP$TaggedPitchType == "Slider" | Spec_SP$TaggedPitchType == "Undefined")
+breaking <- breaking[!is.na(breaking$SpinRate),]
+changeup <- subset(Spec_SP, Spec_SP$TaggedPitchType == "ChangeUp")
+changeup <- changeup[!is.na(changeup$SpinRate),]
+
+no_contact_fb <- subset(fastball, fastball$PitchCall == "StrikeCalled" | fastball$PitchCall == "StrikeSwinging" | fastball$PitchCall == "BallCalled")
+no_contact_fb_R <- subset(no_contact_fb, no_contact_fb$BatterSide == "Right")
+no_contact_fb_L <- subset(no_contact_fb, no_contact_fb$BatterSide == "Left")
+contact_fb <- subset(fastball, fastball$PitchCall == "InPlay" | fastball$PitchCall == "FoulBall")
+contact_fb_R <- subset(contact_fb, contact_fb$BatterSide == "Right")
+contact_fb_L <- subset(contact_fb, contact_fb$BatterSide == "Left")
+
+no_contact_bb <- subset(breaking, breaking$PitchCall == "StrikeCalled" | breaking$PitchCall == "StrikeSwinging" | breaking$PitchCall == "BallCalled")
+no_contact_bb_R <- subset(no_contact_bb, no_contact_bb$BatterSide == "Right")
+no_contact_bb_L <- subset(no_contact_bb, no_contact_bb$BatterSide == "Left")
+contact_bb <- subset(breaking, breaking$PitchCall == "InPlay" | breaking$PitchCall == "FoulBall")
+contact_bb_R <- subset(contact_bb, contact_bb$BatterSide == "Right")
+contact_bb_L <- subset(contact_bb, contact_bb$BatterSide == "Left")
+
+no_contact_ch <- subset(changeup, changeup$PitchCall == "StrikeCalled" | changeup$PitchCall == "StrikeSwinging" | changeup$PitchCall == "BallCalled")
+no_contact_ch_R <- subset(no_contact_ch, no_contact_ch$BatterSide == "Right")
+no_contact_ch_L <- subset(no_contact_ch, no_contact_ch$BatterSide == "Left")
+contact_ch <- subset(changeup, changeup$PitchCall == "InPlay" | changeup$PitchCall == "FoulBall")
+contact_ch_R <- subset(contact_ch, contact_ch$BatterSide == "Right")
+contact_ch_L <- subset(contact_ch, contact_ch$BatterSide == "Left")
+
+x <- c(-.95,.95,.95,-.95,-.95)
+z <- c(1.6,1.6,3.5,3.5,1.6)
+
+sz <- data.frame(x,z) 
+
+xx <- c(-1.15, 1.15, 1.15, -1.15, -1.15)
+zz <- c(1.6, 1.6, 3.5, 3.5, 1.6)
+
+sszz <- data.frame(xx,zz)
+
+xxx <- c(-.8, .8, .8, -.8, -.8)
+zzz <- c(1.8, 1.8, 3.3, 3.3, 1.8)
+
+ssszzz <- data.frame(xxx,zzz)
+```
+
+```{r echo=FALSE, message=FALSE}
+fb_velo <- mean(fastball$RelSpeed)
+fb_spin <- mean(fastball$SpinRate)
+fb_invb <- mean(fastball$InducedVertBreak)
+fb_horz <- mean(fastball$HorzBreak)
+fb_axis <- mean(fastball$SpinAxis)
+
+fb_table <- matrix(c(fb_velo, fb_spin, fb_invb, fb_horz, fb_axis), nrow = 1, ncol = 5)
+rownames(fb_table) <- c("Fastball")
+colnames(fb_table) <- c("Velocity", "Spin Rate", "Induced VB", "Horz. Break", "Tilt")
+fb_table <- as.table(fb_table)
+
+nc_fb_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_fb_R, aes(x = no_contact_fb_R$PlateLocSide, y = no_contact_fb_R$PlateLocHeight, color= no_contact_fb_R$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:FB,RHB")
+
+nc_fb_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_fb_L, aes(x = no_contact_fb_L$PlateLocSide, y = no_contact_fb_L$PlateLocHeight, color= no_contact_fb_L$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:FB,LHB")
+
+ev_fb_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_fb_R, aes(x = contact_fb_R$PlateLocSide, y = contact_fb_R$PlateLocHeight, color= contact_fb_R$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:FB,RHB")
+
+ev_fb_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_fb_L, aes(x = contact_fb_L$PlateLocSide, y = contact_fb_L$PlateLocHeight, color= contact_fb_L$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:FB,LHB")
+
+bb_velo <- mean(breaking$RelSpeed)
+bb_spin <- mean(breaking$SpinRate)
+bb_invb <- mean(breaking$InducedVertBreak)
+bb_horz <- mean(breaking$HorzBreak)
+bb_axis <- mean(breaking$SpinAxis)
+
+bb_table <- matrix(c(bb_velo, bb_spin, bb_invb, bb_horz, bb_axis), nrow = 1, ncol = 5)
+rownames(bb_table) <- c("Breaking Ball")
+colnames(bb_table) <- c("Velocity", "Spin Rate", "Induced VB", "Horz. Break", "Tilt")
+bb_table <- as.table(bb_table)
+
+nc_bb_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_bb_R, aes(x = no_contact_bb_R$PlateLocSide, y = no_contact_bb_R$PlateLocHeight, color= no_contact_bb_R$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:BB,RHB")
+
+nc_bb_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_bb_L, aes(x = no_contact_bb_L$PlateLocSide, y = no_contact_bb_L$PlateLocHeight, color= no_contact_bb_L$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:BB,LHB")
+
+ev_bb_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_bb_R, aes(x = contact_bb_R$PlateLocSide, y = contact_bb_R$PlateLocHeight, color= contact_bb_R$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:BB,RHB")
+
+ev_bb_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_bb_L, aes(x = contact_bb_L$PlateLocSide, y = contact_bb_L$PlateLocHeight, color= contact_bb_L$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:BB,LHB")
+
+ch_velo <- mean(changeup$RelSpeed)
+ch_spin <- mean(changeup$SpinRate)
+ch_invb <- mean(changeup$InducedVertBreak)
+ch_horz <- mean(changeup$HorzBreak)
+ch_axis <- mean(changeup$SpinAxis)
+
+ch_table <- matrix(c(ch_velo, ch_spin, ch_invb, ch_horz, ch_axis), nrow = 1, ncol = 5)
+rownames(ch_table) <- c("ChangeUp")
+colnames(ch_table) <- c("Velocity", "Spin Rate", "Induced VB", "Horz. Break", "Tilt")
+ch_table <- as.table(ch_table)
+
+nc_ch_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_ch_R, aes(x = no_contact_ch_R$PlateLocSide, y = no_contact_ch_R$PlateLocHeight, color= no_contact_ch_R$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:CH,RHB")
+
+nc_ch_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = no_contact_ch_L, aes(x = no_contact_ch_L$PlateLocSide, y = no_contact_ch_L$PlateLocHeight, color= no_contact_ch_L$PitchCall))+
+  scale_size(range = c(1,4)) + xlim(-3,3) + ylim(0,5) + ggtitle("Balls/Strikes:CH,LHB")
+
+ev_ch_R <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_ch_R, aes(x = contact_ch_R$PlateLocSide, y = contact_ch_R$PlateLocHeight, color= contact_ch_R$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:CH,RHB")
+
+ev_ch_L <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z))+
+  coord_equal()+
+  xlab("Plate Side")+
+  ylab("Plate Height")+
+  geom_point(data = contact_ch_L, aes(x = contact_ch_L$PlateLocSide, y = contact_ch_L$PlateLocHeight, color= contact_ch_L$ExitSpeed))+
+  scale_size(range = c(1,4)) + xlim(-2,2) + ylim(0,5) + ggtitle("Exit Velo:CH,LHB")
+```
+
+```{r echo=FALSE, message=FALSE}
+fb_r <- subset(fastball,fastball$BatterSide =="Right")
+fb_l <- subset(fastball,fastball$BatterSide == "Left")
+fb_iz_r <- subset(fb_r, fb_r$PlateLocHeight >= 1.6 & fb_r$PlateLocHeight <= 3.5 & fb_r$PlateLocSide >= -.95 & fb_r$PlateLocSide <= .95)
+fb_iz_l <- subset(fb_l, fb_l$PlateLocHeight >= 1.6 & fb_l$PlateLocHeight <= 3.5 & fb_l$PlateLocSide >= -.95 & fb_l$PlateLocSide <= .95) 
+fb_oz_r <- subset(fb_r, fb_r$PlateLocHeight <= 1.6 | fb_r$PlateLocHeight > 3.5 | fb_r$PlateLocSide <= -.95 | fb_r$PlateLocSide >= .95)
+fb_oz_l <- subset(fb_l, fb_l$PlateLocHeight <= 1.6 | fb_l$PlateLocHeight > 3.5 | fb_l$PlateLocSide <= -.95 | fb_l$PlateLocSide >= .95)
+fb_r_iz_pct <- NROW(fb_iz_r)/NROW(fb_r)
+fb_r_oz_pct <- 1 - fb_r_iz_pct
+fb_l_iz_pct <- NROW(fb_iz_l)/NROW(fb_l)
+fb_l_oz_pct <- 1 - fb_l_iz_pct
+fb_r_ss <- subset(fb_r, fb_r$PitchCall == "StrikeSwinging")
+fb_r_ss_pct <- NROW(fb_r_ss)/NROW(fb_r)
+fb_l_ss <- subset(fb_l, fb_l$PitchCall == "StrikeSwinging")
+fb_l_ss_pct <- NROW(fb_l_ss)/NROW(fb_l)
+fb_r_cs <- subset(fb_r, fb_r$PitchCall == "StrikeCalled")
+fb_r_cs_pct <- NROW(fb_r_cs)/NROW(fb_r)
+fb_l_cs <- subset(fb_l, fb_l$PitchCall == "StrikeCalled")
+fb_l_cs_pct <- NROW(fb_l_cs)/NROW(fb_l)
+fb_r_fb <- subset(fb_r, fb_r$PitchCall == "FoulBall")
+fb_r_fb_pct <- NROW(fb_r_fb)/NROW(fb_r)
+fb_l_fb <- subset(fb_l, fb_l$PitchCall == "FoulBall")
+fb_l_fb_pct <- NROW(fb_l_fb)/NROW(fb_l)
+fb_con_r <- subset(fb_r, fb_r$PitchCall == "InPlay")
+fb_con_r_pct <- NROW(fb_con_r)/NROW(fb_r)
+fb_con_l <- subset(fb_l, fb_l$PitchCall == "InPlay")
+fb_con_l_pct <- NROW(fb_con_l)/NROW(fb_l)
+fb_iz_r_sw <- subset(fb_iz_r, fb_iz_r$PitchCall == "InPlay" | fb_iz_r$PitchCall == "FoulBall" | fb_iz_r$PitchCall == "StrikeSwinging")
+fb_iz_r_sw_pct <- NROW(fb_iz_r_sw)/NROW(fb_iz_r)
+fb_iz_l_sw <- subset(fb_iz_l, fb_iz_l$PitchCall == "InPlay" | fb_iz_l$PitchCall == "FoulBall" | fb_iz_l$PitchCall == "StrikeSwinging")
+fb_iz_l_sw_pct <- NROW(fb_iz_l_sw)/NROW(fb_iz_l)
+fb_oz_r_sw <- subset(fb_oz_r, fb_oz_r$PitchCall == "InPlay" | fb_oz_r$PitchCall == "FoulBall" | fb_oz_r$PitchCall == "StrikeSwinging")
+fb_oz_r_sw_pct <- NROW(fb_oz_r_sw)/NROW(fb_oz_r)
+fb_oz_l_sw <- subset(fb_oz_l, fb_oz_l$PitchCall == "InPlay" | fb_oz_l$PitchCall == "FoulBall" | fb_oz_l$PitchCall == "StrikeSwinging")
+fb_oz_l_sw_pct <- NROW(fb_oz_l_sw)/NROW(fb_oz_l)
+bb_r <- subset(breaking,breaking$BatterSide =="Right")
+bb_l <- subset(breaking,breaking$BatterSide == "Left")
+bb_iz_r <- subset(bb_r, bb_r$PlateLocHeight >= 1.6 & bb_r$PlateLocHeight <= 3.5 & bb_r$PlateLocSide >= -.95 & bb_r$PlateLocSide <= .95)
+bb_iz_l <- subset(bb_l, bb_l$PlateLocHeight >= 1.6 & bb_l$PlateLocHeight <= 3.5 & bb_l$PlateLocSide >= -.95 & bb_l$PlateLocSide <= .95) 
+bb_oz_r <- subset(bb_r, bb_r$PlateLocHeight <= 1.6 | bb_r$PlateLocHeight > 3.5 | bb_r$PlateLocSide <= -.95 | bb_r$PlateLocSide >= .95)
+bb_oz_l <- subset(bb_l, bb_l$PlateLocHeight <= 1.6 | bb_l$PlateLocHeight > 3.5 | bb_l$PlateLocSide <= -.95 | bb_l$PlateLocSide >= .95)
+bb_r_iz_pct <- NROW(bb_iz_r)/NROW(bb_r)
+bb_r_oz_pct <- 1 - bb_r_iz_pct
+bb_l_iz_pct <- NROW(bb_iz_l)/NROW(bb_l)
+bb_l_oz_pct <- 1 - bb_l_iz_pct
+bb_r_ss <- subset(bb_r, bb_r$PitchCall == "StrikeSwinging")
+bb_r_ss_pct <- NROW(bb_r_ss)/NROW(bb_r)
+bb_l_ss <- subset(bb_l, bb_l$PitchCall == "StrikeSwinging")
+bb_l_ss_pct <- NROW(bb_l_ss)/NROW(bb_l)
+bb_r_cs <- subset(bb_r, bb_r$PitchCall == "StrikeCalled")
+bb_r_cs_pct <- NROW(bb_r_cs)/NROW(bb_r)
+bb_l_cs <- subset(bb_l, bb_l$PitchCall == "StrikeCalled")
+bb_l_cs_pct <- NROW(bb_l_cs)/NROW(bb_l)
+bb_r_fb <- subset(bb_r, bb_r$PitchCall == "FoulBall")
+bb_r_fb_pct <- NROW(bb_r_fb)/NROW(bb_r)
+bb_l_fb <- subset(bb_l, bb_l$PitchCall == "FoulBall")
+bb_l_fb_pct <- NROW(bb_l_fb)/NROW(bb_l)
+bb_con_r <- subset(bb_r, bb_r$PitchCall == "InPlay")
+bb_con_r_pct <- NROW(bb_con_r)/NROW(bb_r)
+bb_con_l <- subset(bb_l, bb_l$PitchCall == "InPlay")
+bb_con_l_pct <- NROW(bb_con_l)/NROW(bb_l)
+bb_iz_r_sw <- subset(bb_iz_r, bb_iz_r$PitchCall == "InPlay" | bb_iz_r$PitchCall == "FoulBall" | bb_iz_r$PitchCall == "StrikeSwinging")
+bb_iz_r_sw_pct <- NROW(bb_iz_r_sw)/NROW(bb_iz_r)
+bb_iz_l_sw <- subset(bb_iz_l, bb_iz_l$PitchCall == "InPlay" | bb_iz_l$PitchCall == "FoulBall" | bb_iz_l$PitchCall == "StrikeSwinging")
+bb_iz_l_sw_pct <- NROW(bb_iz_l_sw)/NROW(bb_iz_l)
+bb_oz_r_sw <- subset(bb_oz_r, bb_oz_r$PitchCall == "InPlay" | bb_oz_r$PitchCall == "FoulBall" | bb_oz_r$PitchCall == "StrikeSwinging")
+bb_oz_r_sw_pct <- NROW(bb_oz_r_sw)/NROW(bb_oz_r)
+bb_oz_l_sw <- subset(bb_oz_l, bb_oz_l$PitchCall == "InPlay" | bb_oz_l$PitchCall == "FoulBall" | bb_oz_l$PitchCall == "StrikeSwinging")
+bb_oz_l_sw_pct <- NROW(bb_oz_l_sw)/NROW(bb_oz_l)
+ch_r <- subset(changeup,changeup$BatterSide =="Right")
+ch_l <- subset(changeup,changeup$BatterSide == "Left")
+ch_iz_r <- subset(ch_r, ch_r$PlateLocHeight >= 1.6 & ch_r$PlateLocHeight <= 3.5 & ch_r$PlateLocSide >= -.95 & ch_r$PlateLocSide <= .95)
+ch_iz_l <- subset(ch_l, ch_l$PlateLocHeight >= 1.6 & ch_l$PlateLocHeight <= 3.5 & ch_l$PlateLocSide >= -.95 & ch_l$PlateLocSide <= .95) 
+ch_oz_r <- subset(ch_r, ch_r$PlateLocHeight <= 1.6 | ch_r$PlateLocHeight > 3.5 | ch_r$PlateLocSide <= -.95 | ch_r$PlateLocSide >= .95)
+ch_oz_l <- subset(ch_l, ch_l$PlateLocHeight <= 1.6 | ch_l$PlateLocHeight > 3.5 | ch_l$PlateLocSide <= -.95 | ch_l$PlateLocSide >= .95)
+ch_r_iz_pct <- NROW(ch_iz_r)/NROW(ch_r)
+ch_r_oz_pct <- 1 - ch_r_iz_pct
+ch_l_iz_pct <- NROW(ch_iz_l)/NROW(ch_l)
+ch_l_oz_pct <- 1 - ch_l_iz_pct
+ch_r_ss <- subset(ch_r, ch_r$PitchCall == "StrikeSwinging")
+ch_r_ss_pct <- NROW(ch_r_ss)/NROW(ch_r)
+ch_l_ss <- subset(ch_l, ch_l$PitchCall == "StrikeSwinging")
+ch_l_ss_pct <- NROW(ch_l_ss)/NROW(ch_l)
+ch_r_cs <- subset(ch_r, ch_r$PitchCall == "StrikeCalled")
+ch_r_cs_pct <- NROW(ch_r_cs)/NROW(ch_r)
+ch_l_cs <- subset(ch_l, ch_l$PitchCall == "StrikeCalled")
+ch_l_cs_pct <- NROW(ch_l_cs)/NROW(ch_l)
+ch_r_fb <- subset(ch_r, ch_r$PitchCall == "FoulBall")
+ch_r_fb_pct <- NROW(ch_r_fb)/NROW(ch_r)
+ch_l_fb <- subset(ch_l, ch_l$PitchCall == "FoulBall")
+ch_l_fb_pct <- NROW(ch_l_fb)/NROW(ch_l)
+ch_con_r <- subset(ch_r, ch_r$PitchCall == "InPlay")
+ch_con_r_pct <- NROW(ch_con_r)/NROW(ch_r)
+ch_con_l <- subset(ch_l, ch_l$PitchCall == "InPlay")
+ch_con_l_pct <- NROW(ch_con_l)/NROW(ch_l)
+ch_iz_r_sw <- subset(ch_iz_r, ch_iz_r$PitchCall == "InPlay" | ch_iz_r$PitchCall == "FoulBall" | ch_iz_r$PitchCall == "StrikeSwinging")
+ch_iz_r_sw_pct <- NROW(ch_iz_r_sw)/NROW(ch_iz_r)
+ch_iz_l_sw <- subset(ch_iz_l, ch_iz_l$PitchCall == "InPlay" | ch_iz_l$PitchCall == "FoulBall" | ch_iz_l$PitchCall == "StrikeSwinging")
+ch_iz_l_sw_pct <- NROW(ch_iz_l_sw)/NROW(ch_iz_l)
+ch_oz_r_sw <- subset(ch_oz_r, ch_oz_r$PitchCall == "InPlay" | ch_oz_r$PitchCall == "FoulBall" | ch_oz_r$PitchCall == "StrikeSwinging")
+ch_oz_r_sw_pct <- NROW(ch_oz_r_sw)/NROW(ch_oz_r)
+ch_oz_l_sw <- subset(ch_oz_l, ch_oz_l$PitchCall == "InPlay" | ch_oz_l$PitchCall == "FoulBall" | ch_oz_l$PitchCall == "StrikeSwinging")
+ch_oz_l_sw_pct <- NROW(ch_oz_l_sw)/NROW(ch_oz_l)
+```
+
+```{r echo=FALSE, message=FALSE}
+ar <- fb_r_iz_pct
+br <- fb_r_oz_pct
+cr <- fb_r_ss_pct
+dr <- fb_r_cs_pct
+er <- fb_r_fb_pct
+fr <- fb_con_r_pct
+gr <- fb_iz_r_sw_pct
+hr <- fb_oz_r_sw_pct
+
+aar <- bb_r_iz_pct
+bbr <- bb_r_oz_pct
+ccr <- bb_r_ss_pct
+ddr <- bb_r_cs_pct
+eer <- bb_r_fb_pct
+ffr <- bb_con_r_pct
+ggr <- bb_iz_r_sw_pct
+hhr <- bb_oz_r_sw_pct
+
+aaar <- ch_r_iz_pct
+bbbr <- ch_r_oz_pct
+cccr <- ch_r_ss_pct
+dddr <- ch_r_cs_pct
+eeer <- ch_r_fb_pct
+fffr <- ch_con_r_pct
+gggr <- ch_iz_r_sw_pct
+hhhr <- ch_oz_r_sw_pct
+
+discipline_r <- matrix(c(ar, br, cr, dr, er, fr, gr, hr, aar, bbr, ccr, ddr, eer, ffr, ggr, hhr, aaar, bbbr, cccr, dddr, eeer, fffr, gggr, hhhr), nrow = 3, ncol = 8, byrow = TRUE)
+rownames(discipline_r) <- c("FB", "BB", "CH")
+colnames(discipline_r) <- c("InZone%", "OutZone%", "SwStr%", "CallStr%", "FoulBall%", "Con%", "IzSw%", "OzSw%")
+discipline_r <- as.table(discipline_r)
+
+al <- fb_l_iz_pct
+bl <- fb_l_oz_pct
+cl <- fb_l_ss_pct
+dl <- fb_l_cs_pct
+el <- fb_l_fb_pct
+fl <- fb_con_l_pct
+gl <- fb_iz_l_sw_pct
+hl <- fb_oz_l_sw_pct
+
+aal <- bb_l_iz_pct
+bbl <- bb_l_oz_pct
+ccl <- bb_l_ss_pct
+ddl <- bb_l_cs_pct
+eel <- bb_l_fb_pct
+ffl <- bb_con_l_pct
+ggl <- bb_iz_l_sw_pct
+hhl <- bb_oz_l_sw_pct
+
+aaal <- ch_l_iz_pct
+bbbl <- ch_l_oz_pct
+cccl <- ch_l_ss_pct
+dddl <- ch_l_cs_pct
+eeel <- ch_l_fb_pct
+fffl <- ch_con_l_pct
+gggl <- ch_iz_l_sw_pct
+hhhl <- ch_oz_l_sw_pct
+
+discipline_l <- matrix(c(al, bl, cl, dl, el, fl, gl, hl, aal, bbl, ccl, ddl, eel, ffl, ggl, hhl, aaal, bbbl, cccl, dddl, eeel, fffl, gggl, hhhl), nrow = 3, ncol = 8, byrow = TRUE)
+rownames(discipline_l) <- c("FB", "BB", "CH")
+colnames(discipline_l) <- c("InZone%", "OutZone%", "SwStr%", "CallStr%","FoulBall%", "Con%", "IzSw%", "OzSw%")
+discipline_l <- as.table(discipline_l)
+```
+
+```{r echo=FALSE, message=FALSE}
+r1 <- ggplot() +
+  geom_point(data = Spec_SP, aes(x=Spec_SP$RelSide, y=Spec_SP$RelHeight, color = Spec_SP$TaggedPitchType)) + xlab("Release Side") + ylab("Release Height") + ggtitle("Release Dimensions") + xlim(-3,3) + ylim(4,7)
+
+r2 <- ggplot() +
+  geom_point(data = Spec_SP, aes(x=Spec_SP$PitchNumber, y=Spec_SP$RelHeight, color = Spec_SP$TaggedPitchType)) + xlab("Pitch Number") + ylab("Release Height") + ggtitle("Release Dimensions") + ylim(4,7)
+
+p1 <- ggplot()+
+  xlab("Horizontal Break")+
+  ylab("Induced Vertical Break")+
+  geom_point(data = Spec_SP, aes(x = Spec_SP$HorzBreak, y = Spec_SP$InducedVertBreak, color= Spec_SP$TaggedPitchType)) + ggtitle("Break") 
+
+p2 <- ggplot()+
+  xlab("Spin Axis")+
+  ylab("Release Speed")+
+  geom_point(data = Spec_SP, aes(x = Spec_SP$SpinAxis, y = Spec_SP$RelSpeed, color= Spec_SP$TaggedPitchType))+ ggtitle("Spin Axis") 
+```
+
+_Fastball_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+kable(fb_table, digits = 1, align = "lccc", position = "c")
+
+nc_fb_R
+nc_fb_L
+
+ev_fb_R
+ev_fb_L
+```
+
+_Breaking Ball_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+kable(bb_table, digits = 1, align = "lccc", position = "c")
+
+nc_bb_R
+nc_bb_L
+
+ev_bb_R
+ev_bb_L
+```
+
+_Change Up_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+kable(ch_table, digits = 1, align = "lccc", position = "c")
+
+nc_ch_R
+nc_ch_L
+
+ev_ch_R
+ev_ch_L
+```
+
+_EDGE PCT_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+FB_inbigzone <- subset(fastball, fastball$PlateLocHeight >= 1.6 & fastball$PlateLocHeight <= 3.5 & fastball$PlateLocSide >= -1.15 & fastball$PlateLocSide <= 1.15)
+
+FB_insmallzone <- subset(fastball, fastball$PlateLocHeight >= 1.8 & fastball$PlateLocHeight <= 3.3 & fastball$PlateLocSide >= -.8 & fastball$PlateLocSide <= .8)
+
+BB_inbigzone <- subset(breaking, breaking$PlateLocHeight >= 1.6 & breaking$PlateLocHeight <= 3.5 & breaking$PlateLocSide >= -1.15 & breaking$PlateLocSide <= 1.15)
+
+BB_insmallzone <- subset(breaking, breaking$PlateLocHeight >= 1.8 & breaking$PlateLocHeight <= 3.3 & breaking$PlateLocSide >= -.8 & breaking$PlateLocSide <= .8)
+
+ggplot()+
+  geom_path(data = sszz, aes(x=xx, y=zz))+
+  geom_path(data = ssszzz, aes(x=xxx, y=zzz))+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = Spec_SP, aes(x = Spec_SP$PlateLocSide, y = Spec_SP$PlateLocHeight, color= Spec_SP$TaggedPitchType)) + ggtitle("Zone Overlay") +ylim(0,5) 
+
+FB_edge <- (NROW(FB_inbigzone)-NROW(FB_insmallzone))
+FB_edge_pct <- FB_edge / NROW(fastball)
+
+BB_edge <- (NROW(BB_inbigzone)-NROW(BB_insmallzone))
+BB_edge_pct <- BB_edge / NROW(breaking)
+```
+
+FB Edge PCT:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+FB_edge_pct
+```
+
+BB Edge PCT:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+BB_edge_pct
+```
+
+_Discipline Metrics_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+kable(discipline_r, digits = 2, align = "lccc", position= "c")
+kable(discipline_l, digits = 2, align = "lccc", position= "c")
+```
+
+_Release Point, Space + Time_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+r1
+r2
+```
+
+_Movement,Spin Axis_
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.asp=.5}
+p1
+p2
+```
+

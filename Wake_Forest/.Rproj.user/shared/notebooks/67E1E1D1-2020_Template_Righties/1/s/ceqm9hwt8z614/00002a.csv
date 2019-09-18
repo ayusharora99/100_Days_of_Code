@@ -1,0 +1,5 @@
+"0","p5d <- strikeFX(kmiss_ch, model = n_ch,  layer = r)
+"
+"2","pitchRx assumes the height of each batter is recorded as 'b_height'. Since there is no such column, we will assume each batter has a height of 6'2''"
+"2","Conditioning on: stand  ==  Right
+"

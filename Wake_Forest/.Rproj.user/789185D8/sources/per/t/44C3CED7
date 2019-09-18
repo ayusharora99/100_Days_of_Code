@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568839961287.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "44C3CED7",
+    "lastKnownWriteTime" : 4294967296,
+    "last_content_update" : 1568839961287,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "E6E3349C",
+        "caption" : "Adler_915",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Adler_915&cache_key=E6E3349C",
+        "displayedObservations" : "143",
+        "environment" : "",
+        "object" : "Adler_915",
+        "preview" : "0",
+        "totalObservations" : "143",
+        "variables" : "75"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

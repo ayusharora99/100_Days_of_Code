@@ -1,0 +1,8 @@
+"0","p10 <- ggplot()+"
+"0","  xlab(""Horizontal Release Angle"")+"
+"0","  ylab(""Vertical Release Angle"")+"
+"0","  geom_point(data = truePitch, aes(x = truePitch$HorzRelAngle, y = truePitch$VertRelAngle, color= truePitch$TaggedPitchType))+ ggtitle(""Release Angles"") "
+"0","p11 <- ggplot()+"
+"0","  xlab(""Horizontal Approach Angle"")+"
+"0","  ylab(""Vertical Approach Angle"")+"
+"0","  geom_point(data = truePitch, aes(x = truePitch$HorzApprAngle, y = truePitch$VertApprAngle, color= truePitch$TaggedPitchType))+ ggtitle(""Approach Angles"") "

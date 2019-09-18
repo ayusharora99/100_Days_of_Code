@@ -1,0 +1,8 @@
+"0","p8 <- ggplot()+"
+"0","  xlab(""Horizontal Break"")+"
+"0","  ylab(""Induced Vertical Break"")+"
+"0","  geom_point(data = truePitch, aes(x = truePitch$HorzBreak, y = truePitch$InducedVertBreak, color= TaggedPitchType)) + ggtitle(""Break"") "
+"0","p9 <- ggplot()+"
+"0","  xlab(""Spin Axis"")+"
+"0","  ylab(""Release Speed"")+"
+"0","  geom_point(data = truePitch, aes(x = truePitch$SpinAxis, y = truePitch$RelSpeed, color= truePitch$TaggedPitchType))+ ggtitle(""Spin Axis"") "

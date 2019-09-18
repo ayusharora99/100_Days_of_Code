@@ -1,0 +1,5 @@
+"0","p7
+p7
+"
+"0","p7a <- ggplot() +"
+"0","  geom_point(data = truePitch, aes(x= truePitch$PitchNumber, truePitch$RelHeight, color = TaggedPitchType)) + xlab(""Pitch Number"") + ylab(""Release Height"") + ggtitle(""Release Dimensions"") + ylim(4,7)"

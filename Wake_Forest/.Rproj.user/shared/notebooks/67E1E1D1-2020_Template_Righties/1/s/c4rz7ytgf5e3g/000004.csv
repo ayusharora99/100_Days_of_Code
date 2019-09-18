@@ -1,0 +1,7 @@
+"0","p1a <- ggplot(grid2, aes(x = x, y = y)) + "
+"0","  geom_raster(aes(fill=z)) + "
+"0","   geom_path(data = sz, aes(x=x, y=z))+"
+"0","  geom_point(data = inPlay, aes(x,y), size = 1) +"
+"0","  scale_fill_gradientn(colours = myPalette(6)) +"
+"0","  coord_fixed() +"
+"0","  ylab(""Plate Location Height"") + xlab(""Plate Location Side"") + labs(fill='Exit Velocity') "
