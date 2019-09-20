@@ -1,0 +1,409 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Full Season Pitching Report for Jared Shuster},
+            pdfauthor={Ayush Arora},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Full Season Pitching Report for Jared Shuster}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Ayush Arora}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{9/19/2019}
+
+
+\begin{document}
+\maketitle
+
+\emph{WAKE FOREST BASEBALL}
+
+\begin{verbatim}
+## Warning in strikeFX(noswing, model = m, layer = x): pitchRx assumes the
+## height of each batter is recorded as 'b_height'. Since there is no such
+## column, we will assume each batter has a height of 6'2''
+\end{verbatim}
+
+\begin{verbatim}
+## Conditioning on: stand  ==  Right
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in strikeFX(kmiss, model = n, layer = r): pitchRx assumes the
+## height of each batter is recorded as 'b_height'. Since there is no such
+## column, we will assume each batter has a height of 6'2''
+\end{verbatim}
+
+\begin{verbatim}
+## Conditioning on: stand  ==  Right
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in strikeFX(kmiss_sl, model = n_sl, layer = r): pitchRx assumes
+## the height of each batter is recorded as 'b_height'. Since there is no such
+## column, we will assume each batter has a height of 6'2''
+\end{verbatim}
+
+\begin{verbatim}
+## Conditioning on: stand  ==  Left
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in strikeFX(kmiss_ch, model = n_ch, layer = r): pitchRx assumes
+## the height of each batter is recorded as 'b_height'. Since there is no such
+## column, we will assume each batter has a height of 6'2''
+\end{verbatim}
+
+\begin{verbatim}
+## Conditioning on: stand  ==  Right
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\textbf{Mechanics}
+
+\emph{Fastball, by Location}
+
+\textbf{Fastball Up}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& FB Up Mean & FB Up Range- & FB Up Range+\tabularnewline
+\midrule
+\endhead
+FB Up Velo & 89.9 & 88.9 & 91.0\tabularnewline
+FB Up Spin Rate & 2098.2 & 1996.7 & 2199.6\tabularnewline
+FB Up Induced Vert. Break & 18.4 & 14.8 & 22.0\tabularnewline
+FB Up Vertical Break & -15.7 & -19.4 & -12.1\tabularnewline
+FB Up Horizontal Break & -10.3 & -13.0 & -7.7\tabularnewline
+FB Up Vert. Approach Angle & -4.4 & -5.1 & -3.6\tabularnewline
+FB Up Effective Velocity & 89.7 & 88.5 & 90.9\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Fastball Down}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& FB Down Mean & FB Down Range- & FB Down Range+\tabularnewline
+\midrule
+\endhead
+FB Down Velo & 90.1 & 89.0 & 91.2\tabularnewline
+FB Down Spin Rate & 2107.0 & 1999.2 & 2214.8\tabularnewline
+FB Down Induced Vert. Break & 17.3 & 14.5 & 20.1\tabularnewline
+FB Down Vertical Break & -16.6 & -19.6 & -13.6\tabularnewline
+FB Down Horizontal Break & -10.9 & -13.4 & -8.3\tabularnewline
+FB Down Vert. Approach Angle & -6.1 & -6.7 & -5.4\tabularnewline
+FB Down Effective Velocity & 90.0 & 88.7 & 91.2\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Fastball Left}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& FB Left Mean & FB Left Range- & FB Left Range+\tabularnewline
+\midrule
+\endhead
+FB Left Velo & 89.8 & 88.8 & 90.9\tabularnewline
+FB Left Spin Rate & 2095.9 & 1994.9 & 2196.8\tabularnewline
+FB Left Induced Vert. Break & 17.9 & 14.7 & 21.0\tabularnewline
+FB Left Vertical Break & -16.3 & -19.6 & -13.1\tabularnewline
+FB Left Horizontal Break & -10.9 & -13.5 & -8.4\tabularnewline
+FB Left Vert. Approach Angle & -5.1 & -6.3 & -4.0\tabularnewline
+FB Left Effective Velocity & 89.6 & 88.4 & 90.8\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Fastball Right}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& FB Right Mean & FB Right Range- & FB Right Range+\tabularnewline
+\midrule
+\endhead
+FB Right Velo & 90.2 & 89.2 & 91.3\tabularnewline
+FB Right Spin Rate & 2108.5 & 2000.9 & 2216.1\tabularnewline
+FB Right Induced Vert. Break & 17.9 & 14.5 & 21.3\tabularnewline
+FB Right Vertical Break & -16.0 & -19.4 & -12.5\tabularnewline
+FB Right Horizontal Break & -10.3 & -13.0 & -7.6\tabularnewline
+FB Right Vert. Approach Angle & -5.2 & -6.3 & -4.1\tabularnewline
+FB Right Effective Velocity & 90.0 & 88.8 & 91.3\tabularnewline
+\emph{Offspeed} & & &\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Slider}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& SL Mean & SL Range- & SL Range+\tabularnewline
+\midrule
+\endhead
+SL Velo & 81.1 & 79.5 & 82.7\tabularnewline
+SL Spin Rate & 2019.0 & 1862.9 & 2175.0\tabularnewline
+SL Induced Vert. Break & 1.8 & -2.9 & 6.4\tabularnewline
+SL Vertical Break & -40.3 & -45.8 & -34.8\tabularnewline
+SL Horizontal Break & 2.7 & -0.5 & 6.0\tabularnewline
+SL Vert. Approach Angle & -8.0 & -9.1 & -6.9\tabularnewline
+SL Speed Drop & 6.4 & 5.7 & 7.1\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{verbatim}
+## Warning: Removed 6561 rows containing missing values (geom_rect).
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\textbf{Changeup}
+
+\begin{longtable}[]{@{}llcc@{}}
+\toprule
+& ch Mean & ch Range- & ch Range+\tabularnewline
+\midrule
+\endhead
+CH Velo & 77.1 & 75.5 & 78.7\tabularnewline
+CH Spin Rate & 1515.5 & 1365.7 & 1665.2\tabularnewline
+CH Induced Vert. Break & 11.8 & 7.7 & 16.0\tabularnewline
+CH Vertical Break & -34.0 & -38.1 & -29.8\tabularnewline
+CH Horizontal Break & -5.5 & -9.9 & -1.2\tabularnewline
+CH Vert. Approach Angle & -7.8 & -9.0 & -6.7\tabularnewline
+CH Speed Drop & 6.5 & 5.9 & 7.2\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Contact Visualizations}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-27-1.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-27-2.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-27-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p3fb}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 6561 rows containing missing values (geom_rect).
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p5b}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 6561 rows containing missing values (geom_rect).
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-28-2.pdf}
+
+\textbf{Swinging Strike Visuals}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p5}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-29-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p5b}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 6561 rows containing missing values (geom_rect).
+\end{verbatim}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-29-2.pdf}
+
+\textbf{Release Point Breakdown}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-30-1.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-30-2.pdf}
+
+\textbf{Movement/Spin Axis}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-31-1.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-31-2.pdf}
+
+\textbf{Release/Approach Angles}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-32-1.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-32-2.pdf}
+
+\textbf{Tunneling}
+
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-33-1.pdf}
+\includegraphics{FullSeason_Pitching_files/figure-latex/unnamed-chunk-33-2.pdf}
+
+\emph{Discipline Metrics}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{kable}\NormalTok{(discipline_r, }\DataTypeTok{digits =} \DecValTok{2}\NormalTok{, }\DataTypeTok{align =} \StringTok{"lccc"}\NormalTok{, }\DataTypeTok{position=} \StringTok{"c"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llccclccc@{}}
+\toprule
+& InZone\% & OutZone\% & SwStr\% & CallStr\% & FoulBall\% & Con\% &
+IzSw\% & OzSw\%\tabularnewline
+\midrule
+\endhead
+FB & 0.46 & 0.54 & 0.08 & 0.18 & 0.18 & 0.17 & 0.68 &
+0.23\tabularnewline
+BB & 0.45 & 0.55 & 0.17 & 0.20 & 0.11 & 0.15 & 0.56 &
+0.32\tabularnewline
+CH & 0.25 & 0.75 & 0.32 & 0.09 & 0.05 & 0.07 & 0.75 &
+0.33\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{kable}\NormalTok{(discipline_l, }\DataTypeTok{digits =} \DecValTok{2}\NormalTok{, }\DataTypeTok{align =} \StringTok{"lccc"}\NormalTok{, }\DataTypeTok{position=} \StringTok{"c"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llccclccc@{}}
+\toprule
+& InZone\% & OutZone\% & SwStr\% & CallStr\% & FoulBall\% & Con\% &
+IzSw\% & OzSw\%\tabularnewline
+\midrule
+\endhead
+FB & 0.54 & 0.46 & 0.08 & 0.19 & 0.15 & 0.20 & 0.67 &
+0.17\tabularnewline
+BB & 0.39 & 0.61 & 0.18 & 0.21 & 0.06 & 0.16 & 0.57 &
+0.30\tabularnewline
+CH & 0.21 & 0.79 & 0.36 & 0.07 & 0.07 & 0.07 & 0.67 &
+0.45\tabularnewline
+\bottomrule
+\end{longtable}
+
+
+\end{document}
