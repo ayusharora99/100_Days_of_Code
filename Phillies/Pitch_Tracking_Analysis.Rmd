@@ -1,0 +1,85 @@
+---
+title: "Analysis of Pitch Tracking Technology"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+  Side Note: I think we should be comparing new tech spin to a baseline spin from the same level, pitchers,etc. to minimize the number of external factors affecting the trends 
+
+  Importing the Dataset (keep the csv's name the same and it will be updated automatically when new data are received)
+
+```{r}
+library(readr)
+spin_evaluation <- read_csv("spin_evaluation.csv")
+```
+
+Summarizing the Data:
+
+```{r}
+summary(spin_evaluation)
+# new_tech_spin - the spin rate measured by a pitch-tracking technology we are testing for potential use at our minor league affiliates
+# baseline_spin - the spin rate measured by our baseline system currently in use at the Major League level
+```
+
+  Range is a bit larger for the new tech spin:
+- New Tech: 2334 rpm
+- Baseline: 2071 rpm 
+
+  Similar 1st Q, Median, Mean,3rd Q, and Max (good sign for consistency but then what really is the difference between the two technologies?)
+
+  Graphing x1 over new tech spin & x1 over baseline spin as well as baseline spin over new tech : 
+```{r}
+library(ggplot2)
+
+baseline_spin_scatter = ggplot(spin_evaluation, aes(x= X1, new_tech_spin)) +
+  geom_violin()+
+  scale_shape_manual()+
+  ylim(500, 3000)
+
+ggsave("baseline.png")
+
+new_tech_spin_scatter = ggplot(spin_evaluation, aes(x=X1, baseline_spin))+
+  geom_violin()+
+  scale_shape_manual()+
+  ylim(500, 3000)
+
+ggsave("new.png")
+
+baseline_spin_scatter
+new_tech_spin_scatter
+
+correlation_scatter = ggplot(spin_evaluation, aes(x= baseline_spin, y = new_tech_spin)) +
+  geom_point()+
+  geom_smooth(method = lm)+
+  xlim(500,3000)+
+  ylim(500,3000)+
+  geom_abline()+
+  labs( x = "baseline technology", y = "new technology")
+
+
+ggsave("scatter.png")
+
+correlation_scatter
+
+
+```
+
+  Looking at the violin plots (best for discrete x value, continous y) and adjusting the scale to have a near perfect visual comparision of the new and old technology's data for the same pitches, it seems like the only real difference is that the minimum values (the tale of the violin) is a bit lower for the newer technology spin rates than the baseline. 
+
+  Looking at the scatterplot of both technologies' pitches graphed against each other, assuming its calculated for the same pitch, it seems like they are complimenting and confirming spin rates for most of the pitches accurately. However, the new technology seems to detect lower spin rates for a decent number of pitches that the older technology tagged as having considerably higher spin. There are a few spin rates that are tagged by the baseline technolgoy as being lower than what the new technology tagged those pitches as but less so than the former oddity. 
+
+Calculate correlation coefficient of the relationship between old technology (baseline_spin) & new technology (new_tech_spin):
+
+```{r}
+correlation_coeff_p = cor.test(spin_evaluation$baseline_spin, spin_evaluation$new_tech_spin, method = "pearson", conf.level = 0.95)
+correlation_coeff_k = cor.test(spin_evaluation$baseline_spin, spin_evaluation$new_tech_spin, method = "kendall", conf.level = 0.95)
+correlation_coeff_s = cor.test(spin_evaluation$baseline_spin, spin_evaluation$new_tech_spin, method = "spearman", conf.level = 0.95)
+
+correlation_coeff_p # best for linear relationships!
+correlation_coeff_k
+correlation_coeff_s
+```
+
+  Overall, it seems like most of the data points are consisntent throughout the technology change but there are enough data points that are not comparable that this new technology shouldn't be used because just 80%-87% of the change in baseline technology's spin rates can be mirrored by the new technology's spin rates. 
