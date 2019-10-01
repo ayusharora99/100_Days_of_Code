@@ -1,0 +1,79 @@
+---
+title: "Spray Charts"
+author: "AA"
+date: "9//2019"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(readr)
+past <- read_csv("ACC_4yr.csv")
+past = subset(past, BatterTeam == 'WAK_DEA')
+table(past$Batter)
+library(readr)
+present <- read_csv("WakeFull20191.csv")
+
+colnames(past)
+
+# Present doesn't have bearing nor distance
+colnames(present)
+
+common <- intersect(names(past), names(present))
+combined = rbind(past[,common], present[,common])
+
+colnames(combined)
+
+```
+```{r}
+summary(past$Bearing)
+past$Distance
+
+JA= subset(past, Batter == 'Aiello, John')
+JA %>%
+  select(PitchCall, Bearing, Distance) %>%
+  head()
+
+unique(JA$PitchCall)
+
+JA_BIP = JA %>%
+  filter(PitchCall == 'InPlay')
+
+JA_BIP %>%
+  select(PitchCall, Bearing, Distance) %>%
+  head()
+
+summary(JA_BIP$Bearing)
+summary(JA_BIP$Distance)
+
+spray_chart = function(...){
+  ggplot(...) + 
+    geom_curve(x = -44, xend = 44, y = 300, yend = 300, curvature = -0.45) +
+    geom_segment(x = -45, xend = 0, y = 300, yend = 0) +
+    geom_segment(x =  45, xend = 0, y = 300, yend = 0) + 
+    #geom_curve(x = 83, xend = 173, y = -155, yend = -156, curvature = -0.65, linetype = "dotted") +
+    #coord_fixed() +
+    scale_x_continuous(NULL, limits = c(-60,60)) + 
+    scale_y_continuous(NULL, limits = c(-25,475))
+}
+
+spray_chart(JA_BIP, aes(x = Bearing, y = Distance, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+# HomeRun fence
+JA_HR = subset(JA_BIP, PlayResult == 'HomeRun')
+summary(JA_HR$Bearing)
+summary(JA_HR$Distance)
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

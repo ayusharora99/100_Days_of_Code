@@ -1,0 +1,457 @@
+---
+title: "Hit_Prob"
+author: "SD"
+date: "9/29/2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+library(dplyr)
+library(ggplot2)
+library(mgcv)
+library(dplyr, warn.conflicts = FALSE)
+library(DBI)
+
+past <- read.csv("~/Desktop/ACC_4yr.csv")
+
+past <- past[c("Pitcher", "PitcherThrows","BatterTeam","Batter", "BatterSide", "PlayResult", "RelSpeed", "SpinRate", "SpinAxis", "RelHeight", "RelSide", "Extension", "VertBreak", "InducedVertBreak", "HorzBreak", "PlateLocHeight", "PlateLocSide", "VertApprAngle", "HorzApprAngle", "AutoPitchType", "TaggedPitchType", "ExitSpeed", "Angle", "pfxx", "pfxz")]
+                         
+present <- read.csv("~/Desktop/WFU Baseball/2019/WakeFull20191.csv")
+
+present <- present[c("Pitcher", "PitcherThrows","BatterTeam","Batter", "BatterSide", "PlayResult", "RelSpeed", "SpinRate", "SpinAxis", "RelHeight", "RelSide", "Extension", "VertBreak", "InducedVertBreak", "HorzBreak", "PlateLocHeight", "PlateLocSide", "VertApprAngle", "HorzApprAngle", "AutoPitchType", "TaggedPitchType", "ExitSpeed", "Angle", "pfxx", "pfxz")]
+                   
+allpitch <- rbind(past, present)
+           
+allpitch <- subset(allpitch, allpitch$PlayResult == "Out" | allpitch$PlayResult == "Single" | allpitch$PlayResult == "Double" | allpitch$PlayResult == "Triple" | allpitch$PlayResult == "HomeRun")
+
+out <- subset(allpitch, allpitch$PlayResult == "Out" | allpitch$PlayResult == "FieldersChoice")
+out$outcome <- 0
+
+single <- subset(allpitch, allpitch$PlayResult == "Single")
+single$outcome <- 1
+
+double <- subset(allpitch, allpitch$PlayResult == "Double")
+double$outcome <- 1
+
+triple <- subset(allpitch, allpitch$PlayResult == "Triple")
+triple$outcome <- 1
+
+homerun <- subset(allpitch, allpitch$PlayResult == "HomeRun")
+homerun$outcome <- 1
+
+allpitch1 <- rbind(out, single, double, triple, homerun)
+allpitch1$outcome <- as.numeric(as.character(allpitch1$outcome))
+allpitch1<- allpitch1[c("Pitcher", "PitcherThrows","BatterTeam","Batter", "BatterSide", "PlayResult", "RelSpeed", "SpinRate", "SpinAxis", "RelHeight", "RelSide", "Extension", "VertBreak", "InducedVertBreak", "HorzBreak", "PlateLocHeight", "PlateLocSide", "VertApprAngle", "HorzApprAngle", "AutoPitchType", "TaggedPitchType", "ExitSpeed", "Angle", "pfxx", "pfxz", "outcome")]
+allpitch1 <- na.omit(allpitch1)
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+p1 <- ggplot(allpitch1, aes(allpitch1$ExitSpeed, allpitch1$Angle, color = allpitch1$outcome)) +
+geom_point() + ggtitle(paste("In-Play Outcomes: WFU 2019"))
+p1
+
+fit <- gam(outcome ~ s(ExitSpeed, Angle), family = binomial,
+data = allpitch1)
+
+allpitch2 <- mutate(allpitch1,
+Prob_Hit = exp(predict(fit))/(1 + exp(predict(fit))))
+
+p2 <- ggplot(allpitch2, aes(x = allpitch2$ExitSpeed, y = allpitch2$Angle,
+color = Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities – WFU 2015-2019"))
+p2
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+plot(x= allpitch2$ExitSpeed, y= allpitch2$Prob_Hit)
+plot(x= allpitch2$Angle, y= allpitch2$Prob_Hit)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+fastball_ride <- subset(allpitch2, allpitch2$SpinAxis > 160 & allpitch2$SpinAxis > 200 & allpitch$AutoPitchType == "Fastball")
+
+fastball_runcut <-  subset(allpitch2, allpitch2$SpinAxis > 140 & allpitch2$SpinAxis < 160 & allpitch2$AutoPitchType == "Fastball" | allpitch2$SpinAxis > 200 & allpitch$SpinAxis < 220 & allpitch$AutoPitchType == "Fastball")
+
+breaker <- subset(allpitch2, allpitch2$AutoPitchType == "Slider" | allpitch2$AutoPitchType == "Curveball")
+
+cambio <- subset(allpitch2, allpitch2$AutoPitchType == "ChangeUp")
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+fastball_ride_plot <- ggplot(fastball_ride, aes(x = fastball_ride$ExitSpeed, y = fastball_ride$Angle,
+color = fastball_ride$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities – Fastball, Ride"))
+
+fastball_runcut_plot <- ggplot(fastball_runcut, aes(x = fastball_runcut$ExitSpeed, y = fastball_runcut$Angle,
+color = fastball_runcut$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities – Fastball, Run/Cut"))
+
+breaker_plot <- ggplot(breaker, aes(x = breaker$ExitSpeed, y = breaker$Angle,
+color = breaker$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities – Breaking Ball"))
+
+cambio_plot <- ggplot(cambio, aes(x = cambio$ExitSpeed, y = cambio$Angle,
+color = cambio$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities – ChangeUp"))
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+fastball_ride_plot
+fastball_runcut_plot
+breaker_plot
+cambio_plot
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+flyball <- subset(allpitch2, allpitch2$Angle > 40)
+linedrive_fly <- subset(allpitch2, allpitch2$Angle < 40 & allpitch2$Angle > 10)
+linedrive_gb <- subset(allpitch2, allpitch2$Angle < 10 & allpitch2$Angle > -20)
+groundball <- subset(allpitch2, allpitch2$Angle < -20)
+
+flyball_plot <- ggplot(flyball, aes(x = flyball$ExitSpeed, y = flyball$Angle,
+color = flyball$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – FlyBall"))
+
+linedrive_fly_plot <- ggplot(linedrive_fly, aes(x = linedrive_fly$ExitSpeed, y = linedrive_fly$Angle,
+color = linedrive_fly$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – LineDrive, Fly"))
+
+linedrive_gb_plot <- ggplot(linedrive_gb, aes(x = linedrive_gb$ExitSpeed, y = linedrive_gb$Angle,
+color = linedrive_gb$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – LineDrive, Ground"))
+
+groundball_plot <- ggplot(groundball, aes(x = groundball$ExitSpeed, y = groundball$Angle,
+color = groundball$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – GroundBall"))
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+flyball_plot
+linedrive_fly_plot
+linedrive_gb_plot
+groundball_plot
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+deacons <- subset(allpitch2, allpitch2$BatterTeam == "WAK_DEA")
+
+deacons_plot <- ggplot(deacons, aes(x = deacons$ExitSpeed, y = deacons$Angle,
+color = deacons$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Deacs"))
+deacons_plot
+```
+
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+lanzilli <- subset(deacons, deacons$Batter == "Lanzilli, Chris")
+
+lanzilli_plot <- ggplot(lanzilli, aes(x = lanzilli$ExitSpeed, y = lanzilli$Angle,
+color = lanzilli$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Lanzilli"))
+
+long <- subset(deacons, deacons$Batter == "Long, Christian")
+
+long_plot <- ggplot(long, aes(x = long$ExitSpeed, y = long$Angle,
+color = long$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Long"))
+
+ludowig <- subset(deacons, deacons$Batter == "Ludowig, Michael")
+
+ludowig_plot <- ggplot(ludowig, aes(x = ludowig$ExitSpeed, y = ludowig$Angle,
+color = ludowig$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Ludowig"))
+
+muntz <- subset(deacons, deacons$Batter == "Muntz, Shane")
+
+muntz_plot <- ggplot(muntz, aes(x = muntz$ExitSpeed, y = muntz$Angle,
+color = muntz$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Muntz"))
+
+poteet <- subset(deacons, deacons$Batter == "Poteet, DJ")
+
+poteet_plot <- ggplot(poteet, aes(x = poteet$ExitSpeed, y = poteet$Angle,
+color = poteet$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Poteet"))
+
+seymour <- subset(deacons, deacons$Batter == "Seymour, Bobby")
+
+seymour_plot <- ggplot(seymour, aes(x = seymour$ExitSpeed, y = seymour$Angle,
+color = seymour$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Seymour"))
+
+seymour <- subset(deacons, deacons$Batter == "Seymour, Bobby")
+
+seymour_plot <- ggplot(seymour, aes(x = seymour$ExitSpeed, y = seymour$Angle,
+color = seymour$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Seymour"))
+
+tinsman <- subset(deacons, deacons$Batter == "Seymour, Bobby")
+
+tinsman_plot <- ggplot(tinsman, aes(x = tinsman$ExitSpeed, y = tinsman$Angle,
+color = tinsman$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Tinsman"))
+
+turconi <- subset(deacons, deacons$Batter == "Turconi, Michael")
+
+turconi_plot <- ggplot(turconi, aes(x = turconi$ExitSpeed, y = turconi$Angle,
+color = turconi$Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + ggtitle(paste("Reach Base Probabilities – Turconi"))
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+#NormalStrikeZone
+x <- c(-.8334,.8334,.8334,-.8334,-.8334)
+z <- c(1.5,1.5,3.5,3.5,1.5)
+
+sz <- data.frame(x,z) 
+
+#OutterEdgeZone
+xx <- c(-1.1125, 1.1125, 1.1125, -1.1125, -1.1125)
+zz <- c(1.16667, 1.16667, 3.83, 3.83, 1.16667)
+
+
+sszz <- data.frame(xx,zz)
+
+
+#NormalStrikeZone 
+xxx <- c(-.8334, .8334, .8334, -.8334, -.8334)
+zzz <- c(1.5, 1.5, 3.5, 3.5, 1.5)
+
+ssszzz <- data.frame(xxx,zzz)
+
+xxxx <- c(-0.558333, 0.558333, 0.558333, -0.558333, -0.558333)
+zzzz <- c(1.8334, 1.8334, 3.16667, 3.16667, 1.8334)
+
+sssszzzz <- data.frame(xxxx,zzzz)
+
+#ChaseZone
+xxxxx <- c(-1.5, 1.5, 1.5, -1.5, -1.5)
+zzzzz <- c(0.8334, 0.8334, 4.333, 4.333, 0.8334)
+
+ssssszzzzz <- data.frame(xxxxx,zzzzz)
+
+#OZone
+xxxxxx <- c(-1.75, 1.75, 1.75, -1.75, -1.75)
+zzzzzz <- c(0.5, 0.5, 4.67, 4.67, 0.5)
+
+sssssszzzzzz <- data.frame(xxxxxx,zzzzzz)
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+lanzilli_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = lanzilli, aes(x = lanzilli$PlateLocSide, y = lanzilli$PlateLocHeight, color= lanzilli$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Lanzilli, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+long_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = long, aes(x = long$PlateLocSide, y = long$PlateLocHeight, color= long$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Long, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+ludowig_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = ludowig, aes(x = ludowig$PlateLocSide, y = ludowig$PlateLocHeight, color= ludowig$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Ludowig, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+muntz_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = muntz, aes(x = muntz$PlateLocSide, y = muntz$PlateLocHeight, color= muntz$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Muntz, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+poteet_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = poteet, aes(x = poteet$PlateLocSide, y = poteet$PlateLocHeight, color= poteet$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Poteet, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+seymour_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = seymour, aes(x = seymour$PlateLocSide, y = seymour$PlateLocHeight, color= seymour$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Seymour, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+tinsman_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = tinsman, aes(x = tinsman$PlateLocSide, y = tinsman$PlateLocHeight, color= tinsman$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Tinsman, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+
+turconi_zone <- ggplot()+
+  geom_path(data = sz, aes(x=x, y=z), color= "green", size = 1)+
+  geom_path(data = sszz, aes(x=xx, y=zz), color= "orange", size =1)+
+  geom_path(data = sssszzzz, aes(x=xxxx, y=zzzz), color= "black", size=2, lty = 1)+
+  geom_path(data = ssssszzzzz, aes(x=xxxxx, y=zzzzz), color = "white", size =1, lty=2)+
+  coord_equal()+
+  xlab("feet from home plate")+
+  ylab("feet above the ground")+
+  geom_point(data = turconi, aes(x = turconi$PlateLocSide, y = turconi$PlateLocHeight, color= turconi$Prob_Hit)) + xlim(-2.5,2.5) + ylim(0,5) + ggtitle("Turconi, Zone Hit Prob (Pitcher View)") + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red")
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+lanzilli_plot
+lanzilli_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+long_plot
+long_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+ludowig_plot
+ludowig_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+muntz_plot
+muntz_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+poteet_plot
+poteet_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+seymour_plot
+seymour_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+tinsman_plot
+tinsman_zone
+```
+
+```{r, echo=FALSE, warning=FALSE, fig.asp=.5}
+turconi_plot
+turconi_zone
+```
+
+```{r}
+data2019[,"GameYear"] = substring(data2019$GameID,1,4)
+data2019 = subset(data2019, (BatterTeam == "WAK_DEA" | BatterTeam == "WAK_FAL") & GameYear > 2018)
+#adjust for year
+
+unique_batters = unique(data2019[c("BatterId", "Batter")])
+
+maxEV = matrix(0.00, ncol = 25, nrow = NROW(unique_batters))
+minEV = matrix(0.00, ncol = 25, nrow = NROW(unique_batters))
+avgEV = matrix(0.00, ncol = 25, nrow = NROW(unique_batters))
+
+for (j in 1:NROW(unique_batters)) {
+  for (k in 1:25) {
+    datasub = subset(data2019, BatterId == unique_batters[j,1] & data2019[,k+89] == 1)
+    if(sum(!is.na(datasub$ExitSpeed))==0){
+      maxEV[j,k] = NA
+      minEV[j,k] = NA
+      avgEV[j,k] = NA
+    }
+    else{
+      maxEV[j,k] = max(datasub$ExitSpeed, na.rm=TRUE)
+      minEV[j,k] = min(datasub$ExitSpeed,na.rm=TRUE)
+      avgEV[j,k] = mean(datasub$ExitSpeed,na.rm=TRUE)
+    }
+  }
+}
+```
+
+```{r}
+player_name = "Poteet, DJ" #change batter name
+player_side = "Left" #change batter side if switch hitter
+name_index_match = unique(data2019[,c("BatterId","Batter","BatterSide")])
+far_top_max = maxEV[,c(21,22,23,24,25)]
+top_max = maxEV[,c(19,3,2,1,20)]
+middle_max = maxEV[,c(17,4,5,6,18)]
+bottom_max = maxEV[,c(15,9,8,7,16)]
+far_bottom_max = maxEV[,c(10,11,12,13,14)]
+
+far_top_min = minEV[,c(21,22,23,24,25)]
+top_min = minEV[,c(19,3,2,1,20)]
+middle_min = minEV[,c(17,4,5,6,18)]
+bottom_min = minEV[,c(15,9,8,7,16)]
+far_bottom_min = minEV[,c(10,11,12,13,14)]
+
+far_top_avg = avgEV[,c(21,22,23,24,25)]
+top_avg = avgEV[,c(19,3,2,1,20)]
+middle_avg = avgEV[,c(17,4,5,6,18)]
+bottom_avg = avgEV[,c(15,9,8,7,16)]
+far_bottom_avg = avgEV[,c(10,11,12,13,14)]
+
+player_row = which(name_index_match$Batter == player_name & name_index_match$BatterSide == player_side)
+max_player_rbind = rbind(far_top_max[player_row,],top_max[player_row,],middle_max[player_row,],bottom_max[player_row,],far_bottom_max[player_row,])
+
+min_player_rbind = rbind(far_top_min[player_row,],top_min[player_row,],middle_min[player_row,],bottom_min[player_row,],far_bottom_min[player_row,])
+
+avg_player_rbind = rbind(far_top_avg[player_row,],top_avg[player_row,],middle_avg[player_row,],bottom_avg[player_row,],far_bottom_avg[player_row,])
+
+```
+
+```{r,out.width="45%"}
+library(plotrix)
+colsnames = c("Far Left","Left","Center","Right","Far Right")
+rowsnames = c("Far Top", "Top","Middle","Bottom","Far Bottom")
+player.df = data.frame(avg_player_rbind) #max,min, or avg
+colnames(player.df) = colsnames
+row.names(player.df) = rowsnames
+par(mar = c(0.5, 4, 3.5, 0.5))
+color2D.matplot(player.df, 
+                show.values = 2,
+                axes = FALSE,
+                xlab = "",
+                ylab = "",
+                vcex = 1,
+                vcol = "black",
+                extremes = c("dodgerblue", "firebrick1"))
+axis(3, at = seq_len(ncol(player.df)) - 0.5,
+     labels = names(player.df), pos = 4.75,tick = FALSE, las = 0,cex.axis = 0.8)
+axis(2, at = seq_len(nrow(player.df)) - 0.5,
+     labels = rev(rownames(player.df)), pos = 0.15, tick = FALSE, las = 0, cex.axis = 0.8)
+title(main = paste(player_name," (",player_side,") ","Avg ExitSpeed",sep=""), adj = 0.9, line = 2, cex.main=1.2)
+```
+
+
