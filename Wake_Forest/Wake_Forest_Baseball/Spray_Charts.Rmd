@@ -19,6 +19,8 @@ present <- read_csv("WakeFull20191.csv")
 
 colnames(past)
 
+colnames(WakeFull2019)
+
 # Present doesn't have bearing nor distance
 colnames(present)
 
@@ -29,12 +31,13 @@ colnames(combined)
 
 ```
 ```{r}
-summary(past$Bearing)
+summary(past$Direction)
 past$Distance
 
 JA= subset(past, Batter == 'Aiello, John')
+library(dplyr)
 JA %>%
-  select(PitchCall, Bearing, Distance) %>%
+  select(PitchCall, Direction, Distance) %>%
   head()
 
 unique(JA$PitchCall)
@@ -43,15 +46,15 @@ JA_BIP = JA %>%
   filter(PitchCall == 'InPlay')
 
 JA_BIP %>%
-  select(PitchCall, Bearing, Distance) %>%
+  select(PitchCall, Direction, Distance) %>%
   head()
 
-summary(JA_BIP$Bearing)
+summary(JA_BIP$Direction)
 summary(JA_BIP$Distance)
 
 spray_chart = function(...){
   ggplot(...) + 
-    geom_curve(x = -44, xend = 44, y = 300, yend = 300, curvature = -0.45) +
+    geom_curve(x = -45, xend = 45, y = 300, yend = 300, curvature = -0.45) +
     geom_segment(x = -45, xend = 0, y = 300, yend = 0) +
     geom_segment(x =  45, xend = 0, y = 300, yend = 0) + 
     #geom_curve(x = 83, xend = 173, y = -155, yend = -156, curvature = -0.65, linetype = "dotted") +
@@ -60,15 +63,101 @@ spray_chart = function(...){
     scale_y_continuous(NULL, limits = c(-25,475))
 }
 
-spray_chart(JA_BIP, aes(x = Bearing, y = Distance, color = PlayResult)) +
+library(ggplot2)
+spray_chart(JA_BIP, aes(x = Direction, y = Distance, color = PlayResult)) +
   geom_point() +
   scale_color_hue()
+
+ggplot(JA_BIP) + 
+  geom_line(aes(x = Direction, y = Distance)) + 
+  coord_polar(theta = 'x')
+
+colnames(JA_BIP)
 
 # HomeRun fence
 JA_HR = subset(JA_BIP, PlayResult == 'HomeRun')
 summary(JA_HR$Bearing)
 summary(JA_HR$Distance)
 
+# direction, distance
+
+```
+
+
+
+```{r}
+
+head(Deacons)
+
+library(dplyr)
+Deacons %>%
+  select(PitchCall, Direction, Distance) %>%
+  head()
+
+unique(Deacons$PitchCall)
+
+Deacons_BIP = Deacons %>%
+  filter(PitchCall == 'InPlay')
+
+Deacons_BIP %>%
+  select(PitchCall, Direction, Distance) %>%
+  head()
+
+summary(Deacons_BIP$Direction)
+summary(Deacons_BIP$Distance)
+
+Deacons_BIP$hc_x = (tan(abs(Deacons_BIP$Direction)*(pi/180)) * Deacons_BIP$Distance)
+Deacons_BIP$hc_x2 = tan((Deacons_BIP$Direction)*(pi/180)) * Deacons_BIP$Distance
+Deacons_BIP$hc_y = Deacons_BIP$Distance
+
+
+summary(Deacons_BIP$hc_x)
+summary(Deacons_BIP$hc_x2)
+summary(Deacons_BIP$hc_y)
+
+ggplot(Deacons_BIP, aes(x = hc_x2, y = hc_y, color = PlayResult))+
+  geom_point()
+
+
+```
+```{r}
+LC = subset(Deacons_BIP, Batter == 'Lanzilli, Chris')
+
+colnames(LC)
+
+library(dplyr)
+LC %>%
+  select(PitchCall, Direction, Distance) %>%
+  head()
+
+unique(LC$PitchCall)
+
+LC_BIP = LC %>%
+  filter(PitchCall == 'InPlay')
+
+LC_BIP %>%
+  select(PitchCall, Direction, Distance) %>%
+  head()
+
+summary(LC_BIP$hc_x)
+summary(LC_BIP$hc_y)
+
+spray_chart = function(...){
+  ggplot(...) + 
+    geom_curve(x = -225, xend = 225, y = 310, yend = 300, curvature = -0.45) + 
+    geom_segment(x = -225, xend = 0, y = 310, yend = 0) +
+    geom_segment(x =  225, xend = 0, y = 300, yend = 0) + 
+    geom_curve(x = -65, xend = 65, y = 95, yend = 95, curvature = -0.50, linetype = "dotted") +
+    coord_fixed() +
+    scale_x_continuous(NULL, limits = c(-300,300)) + 
+    scale_y_continuous(NULL, limits = c(-25,500))
+}
+
+library(ggplot2)
+spray_chart(LC_BIP, aes(x = hc_x2, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+```
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.

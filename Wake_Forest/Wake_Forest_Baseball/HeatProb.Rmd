@@ -16,11 +16,17 @@ library(mgcv)
 library(dplyr, warn.conflicts = FALSE)
 library(DBI)
 
-past <- read.csv("~/Desktop/ACC_4yr.csv")
+#past <- read.csv("~/Desktop/ACC_4yr.csv")
+
+library(readr)
+past <- read_csv("ACC_4yr.csv")
+
 
 past <- past[c("Pitcher", "PitcherThrows","BatterTeam","Batter", "BatterSide", "PlayResult", "RelSpeed", "SpinRate", "SpinAxis", "RelHeight", "RelSide", "Extension", "VertBreak", "InducedVertBreak", "HorzBreak", "PlateLocHeight", "PlateLocSide", "VertApprAngle", "HorzApprAngle", "AutoPitchType", "TaggedPitchType", "ExitSpeed", "Angle", "pfxx", "pfxz")]
                          
-present <- read.csv("~/Desktop/WFU Baseball/2019/WakeFull20191.csv")
+# present <- read.csv("~/Desktop/WFU Baseball/2019/WakeFull20191.csv")
+library(readr)
+present <- read_csv("WakeFull20191.csv")
 
 present <- present[c("Pitcher", "PitcherThrows","BatterTeam","Batter", "BatterSide", "PlayResult", "RelSpeed", "SpinRate", "SpinAxis", "RelHeight", "RelSide", "Extension", "VertBreak", "InducedVertBreak", "HorzBreak", "PlateLocHeight", "PlateLocSide", "VertApprAngle", "HorzApprAngle", "AutoPitchType", "TaggedPitchType", "ExitSpeed", "Angle", "pfxx", "pfxz")]
                    
