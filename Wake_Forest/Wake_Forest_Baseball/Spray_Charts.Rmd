@@ -3,13 +3,14 @@ title: "Spray Charts"
 author: "AA"
 date: "9//2019"
 output:
+  word_document: default
+  pdf_document: default
   html_document:
     df_print: paged
 ---
 ```{r}
 library(dplyr)
 library(ggplot2)
-
 ```
 
 ```{r}
@@ -45,6 +46,9 @@ ggplot(Deacons_BIP, aes(x = hc_x, y = hc_y, color = PlayResult))+
 
 
 ```
+
+Adjust Name for updated Spray Charts:
+
 
 ```{r}
 LC = subset(Deacons_BIP, Batter == 'Lanzilli, Chris')

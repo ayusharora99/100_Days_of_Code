@@ -1,0 +1,908 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Spray Charts},
+            pdfauthor={AA},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Spray Charts}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{AA}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{9//2019}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Deacons =}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'Wake4Ayush.csv'}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(Deacons)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   PitchNo    Date       Time PAofInning PitchofPA           Pitcher
+## 1       1 2/15/19 3:59:41 PM          1         1 McSweeney, Morgan
+## 2       2 2/15/19 3:59:47 PM          1         2 McSweeney, Morgan
+## 3       3 2/15/19 4:00:01 PM          1         3 McSweeney, Morgan
+## 4       4 2/15/19 4:00:17 PM          1         4 McSweeney, Morgan
+## 5       5 2/15/19 4:00:30 PM          1         5 McSweeney, Morgan
+## 6       6 2/15/19 4:00:45 PM          1         6 McSweeney, Morgan
+##   PitcherId PitcherThrows PitcherTeam        Batter   BatterId BatterSide
+## 1   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+## 2   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+## 3   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+## 4   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+## 5   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+## 6   8889973         Right     WAK_DEA Brown, Elijah 1000009864       Left
+##   BatterTeam PitcherSet Inning Top.Bottom Outs Balls Strikes
+## 1    SAC_PIO     Windup      1        Top    0     0       0
+## 2    SAC_PIO     Windup      1        Top    0     1       0
+## 3    SAC_PIO     Windup      1        Top    0     2       0
+## 4    SAC_PIO     Windup      1        Top    0     3       0
+## 5    SAC_PIO     Windup      1        Top    0     3       1
+## 6    SAC_PIO     Windup      1        Top    0     3       2
+##   TaggedPitchType AutoPitchType      PitchCall     KorBB   HitType
+## 1        Fastball     Undefined     BallCalled Undefined Undefined
+## 2          Slider        Slider     BallCalled Undefined Undefined
+## 3        Fastball      Fastball     BallCalled Undefined Undefined
+## 4        Fastball      Fastball   StrikeCalled Undefined Undefined
+## 5        Fastball      Fastball StrikeSwinging Undefined Undefined
+## 6        Fastball      Fastball StrikeSwinging Strikeout Undefined
+##   PlayResult OutsOnPlay RunsScored Notes RelSpeed VertRelAngle
+## 1  Undefined          0          0    NA       NA           NA
+## 2  Undefined          0          0    NA 84.23255  -1.07554267
+## 3  Undefined          0          0    NA 91.24500   0.04251552
+## 4  Undefined          0          0    NA 91.70311  -0.73245058
+## 5  Undefined          0          0    NA 92.49611  -1.22112645
+## 6  Undefined          0          0    NA 94.17915  -1.51985608
+##   HorzRelAngle SpinRate SpinAxis  Tilt RelHeight   RelSide Extension
+## 1           NA       NA       NA              NA        NA        NA
+## 2   -2.4082987       NA 107.4561  9:30  5.363378 1.4306846  5.807304
+## 3   -1.8569801 2276.630 203.3535 12:45  5.713891 1.0314675  6.815261
+## 4   -1.6009266 2237.017 210.8246  1:00  5.620063 0.9932288  6.380104
+## 5   -1.4310439 2267.922 195.8120 12:30  5.732850 1.0605666  6.377935
+## 6   -0.6918148 2331.157 192.9460 12:30  5.825744 0.8281148  6.555522
+##   VertBreak InducedVertBreak HorzBreak PlateLocHeight PlateLocSide
+## 1        NA               NA        NA             NA           NA
+## 2 -37.09043          2.69200 -8.679746       1.271444  -1.53323598
+## 3 -16.33617         15.93592  6.893841       4.391347  -0.08863144
+## 4 -20.04495         12.31245  7.365015       3.275624   0.13402503
+## 5 -13.44873         18.75863  5.320979       3.488333   0.18734415
+## 6 -13.33719         17.25967  3.974200       3.320536   0.52503720
+##   ZoneSpeed VertApprAngle HorzApprAngle  ZoneTime ExitSpeed Angle
+## 1        NA            NA            NA        NA        NA    NA
+## 2  76.82715     -8.013761   -4.04342834 0.4539596        NA    NA
+## 3  83.24440     -3.084015   -0.53689821 0.4088698        NA    NA
+## 4  84.13951     -4.523856   -0.20493189 0.4094099        NA    NA
+## 5  83.69065     -3.783252   -0.41563677 0.4084596        NA    NA
+## 6  85.99173     -4.056418    0.06587855 0.3981162        NA    NA
+##   Direction HitSpinRate PositionAt110X PositionAt110Y PositionAt110Z
+## 1        NA          NA             NA             NA             NA
+## 2        NA          NA             NA             NA             NA
+## 3        NA          NA             NA             NA             NA
+## 4        NA          NA             NA             NA             NA
+## 5        NA          NA             NA             NA             NA
+## 6        NA          NA             NA             NA             NA
+##   Distance LastTrackedDistance Bearing HangTime      pfxx      pfxz
+## 1       NA                  NA      NA       NA        NA        NA
+## 2       NA                  NA      NA       NA  3.932144  1.785654
+## 3       NA                  NA      NA       NA -4.372070  8.879298
+## 4       NA                  NA      NA       NA -4.469719  6.950318
+## 5       NA                  NA      NA       NA -3.369747 10.699430
+## 6       NA                  NA      NA       NA -2.391925  9.968472
+##           x0 y0       z0      vx0       vy0        vz0       ax0      ay0
+## 1         NA NA       NA       NA        NA         NA        NA       NA
+## 2 -1.2282559 50 5.253366 5.415470 -122.3920 -3.4448931  5.897945 26.67305
+## 3 -0.9146614 50 5.710412 4.120804 -132.9554 -0.3511608 -7.812245 28.97271
+## 4 -0.8815745 50 5.557973 3.508234 -133.5775 -2.3209700 -8.102538 27.88170
+## 5 -0.9600926 50 5.638732 3.200605 -134.6087 -3.2800027 -6.117431 32.10180
+## 6 -0.7822145 50 5.715353 1.536813 -137.1880 -4.0420673 -4.551081 30.80908
+##         az0 HomeTeam AwayTeam        Stadium Level League
+## 1        NA  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+## 2 -29.49569  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+## 3 -16.30805  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+## 4 -19.57478  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+## 5 -12.75033  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+## 6 -13.20718  WAK_DEA  SAC_PIO GeneHooksField  NCAA    ACC
+##                      GameID                             PitchUID
+## 1 20190215-GeneHooksField-1 71bff009-b321-4ebf-88b9-9abbd8bb23f1
+## 2 20190215-GeneHooksField-1 9c80222c-3164-11e9-b163-94b86dcc8dae
+## 3 20190215-GeneHooksField-1 a5353673-3164-11e9-b163-94b86dcc8dae
+## 4 20190215-GeneHooksField-1 ae64338f-3164-11e9-b163-94b86dcc8dae
+## 5 20190215-GeneHooksField-1 b756074a-3164-11e9-b163-94b86dcc8dae
+## 6 20190215-GeneHooksField-1 bec9716e-3164-11e9-b163-94b86dcc8dae
+##   EffectiveVelo MaxHeight MeasuredDuration SpeedDrop PitchLastMeasuredX
+## 1            NA        NA               NA        NA                 NA
+## 2      83.03025        NA               NA  7.405399          0.1334805
+## 3      92.18674        NA               NA  8.000594         -2.9384282
+## 4      92.06513        NA               NA  7.563601         -2.4791753
+## 5      92.27934        NA               NA  8.805466         -2.3971002
+## 6      94.67681        NA               NA  8.187424         -2.2078163
+##   PitchLastMeasuredY PitchLastMeasuredZ ContactPositionX ContactPositionY
+## 1                 NA                 NA               NA               NA
+## 2           1.088123          1.6244612               NA               NA
+## 3           4.145192          0.1245896               NA               NA
+## 4           2.956380         -0.1241326               NA               NA
+## 5           3.228866         -0.1625542               NA               NA
+## 6           3.057067         -0.5311217               NA               NA
+##   ContactPositionZ                              GameUID
+## 1               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+## 2               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+## 3               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+## 4               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+## 5               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+## 6               NA c26c5ad2-3162-11e9-b163-94b86dcc8dae
+##   outside.of.zone.top.or.Bottom outside.of.zone.in.or.out outside.of.zone
+## 1                             1                         0               1
+## 2                             1                         1               1
+## 3                             1                         0               1
+## 4                             1                         0               1
+## 5                             1                         0               1
+## 6                             1                         0               1
+##   in.zone swing swing.out swing.in Contact contact.out contact.in F.Strike
+## 1       0     0         0        0       0           0          0        0
+## 2       0     0         0        0       0           0          0        0
+## 3       0     0         0        0       0           0          0        0
+## 4       0     0         0        0       0           0          0        0
+## 5       0     1         1        0       0           0          0        0
+## 6       0     1         1        0       0           0          0        0
+##   Swing.and.miss Plate.Appearences In.zone.2.0 Top.Right Top.Center
+## 1              0                 1           0         0          0
+## 2              0                 0           0         0          0
+## 3              0                 0           0         0          0
+## 4              0                 0           0         0          0
+## 5              1                 0           0         0          0
+## 6              1                 0           0         0          0
+##   Top.Left Middle.Left Middle.Center Middle.Right Bottom.Right
+## 1        0           0             0            0            0
+## 2        0           0             0            0            0
+## 3        0           0             0            0            0
+## 4        0           0             0            0            0
+## 5        0           0             0            0            0
+## 6        0           0             0            0            0
+##   Bottom.Center Bottom.Left Far.Bottom.Far.Left Far.Bottom.Left
+## 1             0           0                   0               0
+## 2             0           0                   1               0
+## 3             0           0                   0               0
+## 4             0           0                   0               0
+## 5             0           0                   0               0
+## 6             0           0                   0               0
+##   Far.Bottom.Center Far.Bottom.Right Far.Bottom.Far.Right Bottom.Far.Left
+## 1                 1                0                    0               0
+## 2                 0                0                    0               0
+## 3                 0                0                    0               0
+## 4                 0                0                    0               0
+## 5                 0                0                    0               0
+## 6                 0                0                    0               0
+##   Bottom.Far.Right Center.Far.Left Center.far.Right High.Far.Left
+## 1                0               0                0             0
+## 2                0               0                0             0
+## 3                0               0                0             0
+## 4                0               0                0             0
+## 5                0               0                0             0
+## 6                0               0                0             0
+##   High.Far.Right Far.High.Far.Left Far.High.Left Far.High.Center
+## 1              0                 0             0               0
+## 2              0                 0             0               0
+## 3              0                 0             0               1
+## 4              0                 0             0               1
+## 5              0                 0             0               1
+## 6              0                 0             0               0
+##   Far.High.Right Far.High.Far.Right X_Zone_Axis Hit.Location.Bin.X
+## 1              0                  0           0               0.00
+## 2              0                  0           2               0.00
+## 3              0                  0           2               3.25
+## 4              0                  0           4               0.00
+## 5              0                  0           3               4.00
+## 6              1                  0           0               0.00
+##   Hit.Location.Bin.Y Y_Zone_Axis X0.0 X1.0 X0.1 X1.1 X1.2 X0.2 X2.0 X2.1
+## 1                  0           5    1    0    0    0    0    0    0    0
+## 2                  0           3    0    1    0    0    0    0    0    0
+## 3                  3           2    0    0    0    0    0    0    1    0
+## 4                  0           3    0    0    0    0    0    0    0    0
+## 5                  4           4    0    0    0    0    0    0    0    0
+## 6                  0           4    0    0    0    0    0    0    0    0
+##   X2.2 X3.0 X3.1 X3.2 Fastball.0.0 ChangeUp.0.0 Curveball.0.0 Slider.0.0
+## 1    0    0    0    0            1            0             0          0
+## 2    0    0    0    0            0            0             0          0
+## 3    0    0    0    0            1            0             0          0
+## 4    0    1    0    0            0            0             0          1
+## 5    0    0    1    0            0            0             0          0
+## 6    0    0    0    1            1            0             0          0
+##   Cutter.0.0 Sinker.0.0 Splitter.0.0 Knuckleball Fastball.1.0 Changeup.1.0
+## 1          0          0            0           0            0            0
+## 2          0          0            0           0            1            0
+## 3          0          0            0           0            0            0
+## 4          0          0            0           0            0            0
+## 5          0          0            0           0            0            0
+## 6          0          0            0           0            0            0
+##   Curveball.1.0 Slider.1.0 Cutter.1.0 Sinker.1.0 Splitter.1.0
+## 1             0          0          0          0            0
+## 2             0          0          0          0            0
+## 3             0          0          0          0            0
+## 4             0          0          0          0            0
+## 5             0          0          0          0            0
+## 6             0          0          0          0            0
+##   Knuckleball.1.0 Fastball Changeup Curveball Slider Cutter Sinker
+## 1               0        1        0         0      0      0      0
+## 2               0        1        0         0      0      0      0
+## 3               0        1        0         0      0      0      0
+## 4               0        0        0         0      1      0      0
+## 5               0        1        0         0      0      0      0
+## 6               0        1        0         0      0      0      0
+##   Splitter Knuckleball2 Previous.Pitch.Type Previous.Pitch.Location
+## 1        0            0                                            
+## 2        0            0            Fastball                     0,5
+## 3        0            0                                            
+## 4        0            0                                            
+## 5        0            0            Fastball                     4,3
+## 6        0            0                                            
+##   Pitch.Location PitchCount Pitch Pitches_Thrown Game.Type
+## 1            0,5      C 0-0     1              1      Game
+## 2            2,3      C 1-0     1              2      Game
+## 3            2,2      C 0-0     1              3      Game
+## 4            4,3      C 0-0     1              4      Game
+## 5            3,4      C 0-1     1              5      Game
+## 6            0,4      C 0-0     1              6      Game
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Deacons }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(PitchCall, Direction, Distance) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        PitchCall Direction Distance
+## 1     BallCalled        NA       NA
+## 2     BallCalled        NA       NA
+## 3     BallCalled        NA       NA
+## 4   StrikeCalled        NA       NA
+## 5 StrikeSwinging        NA       NA
+## 6 StrikeSwinging        NA       NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{unique}\NormalTok{(Deacons}\OperatorTok{$}\NormalTok{PitchCall)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] BallCalled      StrikeCalled    StrikeSwinging  InPlay         
+## [5] FoulBall        HitByPitch      BallIntentional
+## 7 Levels: BallCalled BallIntentional FoulBall HitByPitch ... StrikeSwinging
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Deacons_BIP =}\StringTok{ }\NormalTok{Deacons }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(PitchCall }\OperatorTok{==}\StringTok{ 'InPlay'}\NormalTok{)}
+
+\NormalTok{Deacons_BIP }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(PitchCall, Direction, Distance) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   PitchCall  Direction  Distance
+## 1    InPlay  10.448479 123.27025
+## 2    InPlay  -6.416404 288.41910
+## 3    InPlay  27.467616 290.48318
+## 4    InPlay  22.250037 182.72104
+## 5    InPlay -12.201070 265.79181
+## 6    InPlay  17.951385  69.13891
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(Deacons_BIP}\OperatorTok{$}\NormalTok{Direction)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+## -65.326 -19.567  -2.606  -1.758  14.581 142.879     310
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(Deacons_BIP}\OperatorTok{$}\NormalTok{Distance)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##   1.418  26.686 167.402 168.345 291.632 458.935     315
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Deacons_BIP}\OperatorTok{$}\NormalTok{hc_x =}\StringTok{ }\KeywordTok{tan}\NormalTok{((Deacons_BIP}\OperatorTok{$}\NormalTok{Direction)}\OperatorTok{*}\NormalTok{(pi}\OperatorTok{/}\DecValTok{180}\NormalTok{)) }\OperatorTok{*}\StringTok{ }\NormalTok{Deacons_BIP}\OperatorTok{$}\NormalTok{Distance}
+\NormalTok{Deacons_BIP}\OperatorTok{$}\NormalTok{hc_y =}\StringTok{ }\NormalTok{Deacons_BIP}\OperatorTok{$}\NormalTok{Distance}
+
+
+\KeywordTok{summary}\NormalTok{(Deacons_BIP}\OperatorTok{$}\NormalTok{hc_x)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+## -278.609  -34.799   -1.847   -5.283   21.939  267.435      315
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(Deacons_BIP}\OperatorTok{$}\NormalTok{hc_y)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##   1.418  26.686 167.402 168.345 291.632 458.935     315
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(Deacons_BIP, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult))}\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 315 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+Adjust Name for updated Spray Charts:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LC =}\StringTok{ }\KeywordTok{subset}\NormalTok{(Deacons_BIP, Batter }\OperatorTok{==}\StringTok{ 'Lanzilli, Chris'}\NormalTok{)}
+
+\KeywordTok{colnames}\NormalTok{(LC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] "PitchNo"                       "Date"                         
+##   [3] "Time"                          "PAofInning"                   
+##   [5] "PitchofPA"                     "Pitcher"                      
+##   [7] "PitcherId"                     "PitcherThrows"                
+##   [9] "PitcherTeam"                   "Batter"                       
+##  [11] "BatterId"                      "BatterSide"                   
+##  [13] "BatterTeam"                    "PitcherSet"                   
+##  [15] "Inning"                        "Top.Bottom"                   
+##  [17] "Outs"                          "Balls"                        
+##  [19] "Strikes"                       "TaggedPitchType"              
+##  [21] "AutoPitchType"                 "PitchCall"                    
+##  [23] "KorBB"                         "HitType"                      
+##  [25] "PlayResult"                    "OutsOnPlay"                   
+##  [27] "RunsScored"                    "Notes"                        
+##  [29] "RelSpeed"                      "VertRelAngle"                 
+##  [31] "HorzRelAngle"                  "SpinRate"                     
+##  [33] "SpinAxis"                      "Tilt"                         
+##  [35] "RelHeight"                     "RelSide"                      
+##  [37] "Extension"                     "VertBreak"                    
+##  [39] "InducedVertBreak"              "HorzBreak"                    
+##  [41] "PlateLocHeight"                "PlateLocSide"                 
+##  [43] "ZoneSpeed"                     "VertApprAngle"                
+##  [45] "HorzApprAngle"                 "ZoneTime"                     
+##  [47] "ExitSpeed"                     "Angle"                        
+##  [49] "Direction"                     "HitSpinRate"                  
+##  [51] "PositionAt110X"                "PositionAt110Y"               
+##  [53] "PositionAt110Z"                "Distance"                     
+##  [55] "LastTrackedDistance"           "Bearing"                      
+##  [57] "HangTime"                      "pfxx"                         
+##  [59] "pfxz"                          "x0"                           
+##  [61] "y0"                            "z0"                           
+##  [63] "vx0"                           "vy0"                          
+##  [65] "vz0"                           "ax0"                          
+##  [67] "ay0"                           "az0"                          
+##  [69] "HomeTeam"                      "AwayTeam"                     
+##  [71] "Stadium"                       "Level"                        
+##  [73] "League"                        "GameID"                       
+##  [75] "PitchUID"                      "EffectiveVelo"                
+##  [77] "MaxHeight"                     "MeasuredDuration"             
+##  [79] "SpeedDrop"                     "PitchLastMeasuredX"           
+##  [81] "PitchLastMeasuredY"            "PitchLastMeasuredZ"           
+##  [83] "ContactPositionX"              "ContactPositionY"             
+##  [85] "ContactPositionZ"              "GameUID"                      
+##  [87] "outside.of.zone.top.or.Bottom" "outside.of.zone.in.or.out"    
+##  [89] "outside.of.zone"               "in.zone"                      
+##  [91] "swing"                         "swing.out"                    
+##  [93] "swing.in"                      "Contact"                      
+##  [95] "contact.out"                   "contact.in"                   
+##  [97] "F.Strike"                      "Swing.and.miss"               
+##  [99] "Plate.Appearences"             "In.zone.2.0"                  
+## [101] "Top.Right"                     "Top.Center"                   
+## [103] "Top.Left"                      "Middle.Left"                  
+## [105] "Middle.Center"                 "Middle.Right"                 
+## [107] "Bottom.Right"                  "Bottom.Center"                
+## [109] "Bottom.Left"                   "Far.Bottom.Far.Left"          
+## [111] "Far.Bottom.Left"               "Far.Bottom.Center"            
+## [113] "Far.Bottom.Right"              "Far.Bottom.Far.Right"         
+## [115] "Bottom.Far.Left"               "Bottom.Far.Right"             
+## [117] "Center.Far.Left"               "Center.far.Right"             
+## [119] "High.Far.Left"                 "High.Far.Right"               
+## [121] "Far.High.Far.Left"             "Far.High.Left"                
+## [123] "Far.High.Center"               "Far.High.Right"               
+## [125] "Far.High.Far.Right"            "X_Zone_Axis"                  
+## [127] "Hit.Location.Bin.X"            "Hit.Location.Bin.Y"           
+## [129] "Y_Zone_Axis"                   "X0.0"                         
+## [131] "X1.0"                          "X0.1"                         
+## [133] "X1.1"                          "X1.2"                         
+## [135] "X0.2"                          "X2.0"                         
+## [137] "X2.1"                          "X2.2"                         
+## [139] "X3.0"                          "X3.1"                         
+## [141] "X3.2"                          "Fastball.0.0"                 
+## [143] "ChangeUp.0.0"                  "Curveball.0.0"                
+## [145] "Slider.0.0"                    "Cutter.0.0"                   
+## [147] "Sinker.0.0"                    "Splitter.0.0"                 
+## [149] "Knuckleball"                   "Fastball.1.0"                 
+## [151] "Changeup.1.0"                  "Curveball.1.0"                
+## [153] "Slider.1.0"                    "Cutter.1.0"                   
+## [155] "Sinker.1.0"                    "Splitter.1.0"                 
+## [157] "Knuckleball.1.0"               "Fastball"                     
+## [159] "Changeup"                      "Curveball"                    
+## [161] "Slider"                        "Cutter"                       
+## [163] "Sinker"                        "Splitter"                     
+## [165] "Knuckleball2"                  "Previous.Pitch.Type"          
+## [167] "Previous.Pitch.Location"       "Pitch.Location"               
+## [169] "PitchCount"                    "Pitch"                        
+## [171] "Pitches_Thrown"                "Game.Type"                    
+## [173] "hc_x"                          "hc_y"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LC }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(PitchCall, Direction, Distance) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    PitchCall  Direction   Distance
+## 11    InPlay -21.962144   8.634593
+## 20    InPlay -44.057490   8.902690
+## 31    InPlay -36.691469 373.899232
+## 41    InPlay   1.608335  30.282774
+## 66    InPlay -10.124818   8.040641
+## 82    InPlay   6.203708 353.527536
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{unique}\NormalTok{(LC}\OperatorTok{$}\NormalTok{PitchCall)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] InPlay
+## 7 Levels: BallCalled BallIntentional FoulBall HitByPitch ... StrikeSwinging
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LC_BIP =}\StringTok{ }\NormalTok{LC }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(PitchCall }\OperatorTok{==}\StringTok{ 'InPlay'}\NormalTok{)}
+
+\NormalTok{LC_BIP }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(PitchCall, Direction, Distance) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   PitchCall  Direction   Distance
+## 1    InPlay -21.962144   8.634593
+## 2    InPlay -44.057490   8.902690
+## 3    InPlay -36.691469 373.899232
+## 4    InPlay   1.608335  30.282774
+## 5    InPlay -10.124818   8.040641
+## 6    InPlay   6.203708 353.527536
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(LC_BIP}\OperatorTok{$}\NormalTok{hc_x)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.      NA's 
+## -278.6093  -63.3284  -14.1119  -30.4738   -0.2667  189.7384        21
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(LC_BIP}\OperatorTok{$}\NormalTok{hc_y)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##   2.738  40.431 195.562 186.653 314.984 421.441      21
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LC_R =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_BIP, PitcherThrows }\OperatorTok{==}\StringTok{ 'Right'}\NormalTok{)}
+\NormalTok{LC_L =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_BIP, PitcherThrows }\OperatorTok{==}\StringTok{ 'Left'}\NormalTok{)}
+
+\NormalTok{LC_R_FB =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_R, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Fastball'}\NormalTok{)}
+\NormalTok{LC_R_CB =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_R, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Curveball'}\NormalTok{)}
+\NormalTok{LC_R_SL =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_R, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Slider'}\NormalTok{)}
+\NormalTok{LC_R_CH =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_R, TaggedPitchType }\OperatorTok{==}\StringTok{ 'ChangeUp'}\NormalTok{)}
+
+\NormalTok{LC_L_FB =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_L, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Fastball'}\NormalTok{)}
+\NormalTok{LC_L_CB =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_L, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Curveball'}\NormalTok{)}
+\NormalTok{LC_L_SL =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_L, TaggedPitchType }\OperatorTok{==}\StringTok{ 'Slider'}\NormalTok{)}
+\NormalTok{LC_L_CH =}\StringTok{ }\KeywordTok{subset}\NormalTok{(LC_L, TaggedPitchType }\OperatorTok{==}\StringTok{ 'ChangeUp'}\NormalTok{)}
+
+\NormalTok{spray_chart =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(...)\{}
+  \KeywordTok{ggplot}\NormalTok{(...) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{225}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{300}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.45}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =}  \DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{300}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{65}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{65}\NormalTok{, }\DataTypeTok{y =} \DecValTok{95}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{95}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.50}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{coord_fixed}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{300}\NormalTok{,}\DecValTok{300}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{scale_y_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{25}\NormalTok{,}\DecValTok{500}\NormalTok{))}
+\NormalTok{\}}
+
+\NormalTok{all_spray_chart =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_BIP, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs All'}\NormalTok{)}
+
+
+\NormalTok{spray_chart =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(...)\{}
+  \KeywordTok{ggplot}\NormalTok{(...) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{225}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{300}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.45}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =}  \DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{300}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{65}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{65}\NormalTok{, }\DataTypeTok{y =} \DecValTok{95}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{95}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.50}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{coord_fixed}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{300}\NormalTok{,}\DecValTok{300}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{scale_y_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{25}\NormalTok{,}\DecValTok{500}\NormalTok{))}
+\NormalTok{\}}
+\NormalTok{spray_chart_right =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_R, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Right'}\NormalTok{)}
+
+\NormalTok{spray_chart =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(...)\{}
+  \KeywordTok{ggplot}\NormalTok{(...) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{225}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{300}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.45}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{310}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_segment}\NormalTok{(}\DataTypeTok{x =}  \DecValTok{225}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{0}\NormalTok{, }\DataTypeTok{y =} \DecValTok{300}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_curve}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{65}\NormalTok{, }\DataTypeTok{xend =} \DecValTok{65}\NormalTok{, }\DataTypeTok{y =} \DecValTok{95}\NormalTok{, }\DataTypeTok{yend =} \DecValTok{95}\NormalTok{, }\DataTypeTok{curvature =} \OperatorTok{-}\FloatTok{0.50}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"dotted"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{coord_fixed}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{300}\NormalTok{,}\DecValTok{300}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{scale_y_continuous}\NormalTok{(}\OtherTok{NULL}\NormalTok{, }\DataTypeTok{limits =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{25}\NormalTok{,}\DecValTok{500}\NormalTok{))}
+\NormalTok{\}}
+
+\NormalTok{spray_chart_left =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_L, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Left'}\NormalTok{)}
+
+\NormalTok{spray_chart_R_FB =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_R_FB, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Righty Fastballs'}\NormalTok{)}
+
+\NormalTok{spray_chart_R_CB =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_R_CB, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Righty Curveballs'}\NormalTok{)}
+
+\NormalTok{spray_chart_R_SL =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_R_SL, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Righty Sliders'}\NormalTok{)}
+
+\NormalTok{spray_chart_R_CH =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_R_CH, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Righty Changeups'}\NormalTok{)}
+
+\NormalTok{spray_chart_L_FB =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_L_FB, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Lefty Fastballs'}\NormalTok{)}
+
+\NormalTok{spray_chart_L_CB =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_L_CB, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Lefty Curveballs'}\NormalTok{)}
+
+\NormalTok{spray_chart_L_SL =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_L_SL, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Lefty Sliders'}\NormalTok{)}
+
+\NormalTok{spray_chart_L_CH =}\StringTok{ }\KeywordTok{spray_chart}\NormalTok{(LC_L_CH, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ hc_x, }\DataTypeTok{y =}\NormalTok{ hc_y, }\DataTypeTok{color =}\NormalTok{ PlayResult)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_hue}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{'Spray Chart vs Lefty Changeups'}\NormalTok{)}
+
+
+
+
+
+\NormalTok{all_spray_chart}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 21 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_right}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 14 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_left }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 7 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_R_FB}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 8 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_R_CB}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_R_SL}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 3 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_R_CH}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-7.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_L_FB}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 5 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-8.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_L_CB}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-9.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_L_SL}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-10.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spray_chart_L_CH}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Spray_Charts_files/figure-latex/unnamed-chunk-4-11.pdf}
+
+
+\end{document}

@@ -35,7 +35,15 @@ spray_chart = function(...){
 
 spray_chart(Correa_BIP, aes(x = hc_x, y = -hc_y, color = events)) +
   geom_point() +
-  scale_color_grey()
+  scale_color_hue()
+
+ggplot(Correa_BIP, aes(x=hc_x, y= hc_y, color = events))+
+  geom_point()+
+  scale_color_hue()
+
+summary(Correa_BIP$hc_x)
+summary(Correa_BIP$hc_y)
+
 
 
 Yaz = scrape_statcast_savant(start_date = "2019/05/25", end_date = "2019/09/09", playerid = 573262,player_type = 'batter')
