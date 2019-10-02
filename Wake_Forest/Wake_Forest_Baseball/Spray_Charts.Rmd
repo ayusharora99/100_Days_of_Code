@@ -2,94 +2,21 @@
 title: "Spray Charts"
 author: "AA"
 date: "9//2019"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
-
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
 ```{r}
-library(readr)
-past <- read_csv("ACC_4yr.csv")
-past = subset(past, BatterTeam == 'WAK_DEA')
-table(past$Batter)
-library(readr)
-present <- read_csv("WakeFull20191.csv")
-
-colnames(past)
-
-colnames(WakeFull2019)
-
-# Present doesn't have bearing nor distance
-colnames(present)
-
-common <- intersect(names(past), names(present))
-combined = rbind(past[,common], present[,common])
-
-colnames(combined)
-
-```
-```{r}
-summary(past$Direction)
-past$Distance
-
-JA= subset(past, Batter == 'Aiello, John')
 library(dplyr)
-JA %>%
-  select(PitchCall, Direction, Distance) %>%
-  head()
-
-unique(JA$PitchCall)
-
-JA_BIP = JA %>%
-  filter(PitchCall == 'InPlay')
-
-JA_BIP %>%
-  select(PitchCall, Direction, Distance) %>%
-  head()
-
-summary(JA_BIP$Direction)
-summary(JA_BIP$Distance)
-
-spray_chart = function(...){
-  ggplot(...) + 
-    geom_curve(x = -45, xend = 45, y = 300, yend = 300, curvature = -0.45) +
-    geom_segment(x = -45, xend = 0, y = 300, yend = 0) +
-    geom_segment(x =  45, xend = 0, y = 300, yend = 0) + 
-    #geom_curve(x = 83, xend = 173, y = -155, yend = -156, curvature = -0.65, linetype = "dotted") +
-    #coord_fixed() +
-    scale_x_continuous(NULL, limits = c(-60,60)) + 
-    scale_y_continuous(NULL, limits = c(-25,475))
-}
-
 library(ggplot2)
-spray_chart(JA_BIP, aes(x = Direction, y = Distance, color = PlayResult)) +
-  geom_point() +
-  scale_color_hue()
-
-ggplot(JA_BIP) + 
-  geom_line(aes(x = Direction, y = Distance)) + 
-  coord_polar(theta = 'x')
-
-colnames(JA_BIP)
-
-# HomeRun fence
-JA_HR = subset(JA_BIP, PlayResult == 'HomeRun')
-summary(JA_HR$Bearing)
-summary(JA_HR$Distance)
-
-# direction, distance
 
 ```
 
-
-
 ```{r}
-
+Deacons = read.csv('Wake4Ayush.csv')
 head(Deacons)
 
-library(dplyr)
+
 Deacons %>%
   select(PitchCall, Direction, Distance) %>%
   head()
@@ -106,26 +33,25 @@ Deacons_BIP %>%
 summary(Deacons_BIP$Direction)
 summary(Deacons_BIP$Distance)
 
-Deacons_BIP$hc_x = (tan(abs(Deacons_BIP$Direction)*(pi/180)) * Deacons_BIP$Distance)
-Deacons_BIP$hc_x2 = tan((Deacons_BIP$Direction)*(pi/180)) * Deacons_BIP$Distance
+Deacons_BIP$hc_x = tan((Deacons_BIP$Direction)*(pi/180)) * Deacons_BIP$Distance
 Deacons_BIP$hc_y = Deacons_BIP$Distance
 
 
 summary(Deacons_BIP$hc_x)
-summary(Deacons_BIP$hc_x2)
 summary(Deacons_BIP$hc_y)
 
-ggplot(Deacons_BIP, aes(x = hc_x2, y = hc_y, color = PlayResult))+
+ggplot(Deacons_BIP, aes(x = hc_x, y = hc_y, color = PlayResult))+
   geom_point()
 
 
 ```
+
 ```{r}
 LC = subset(Deacons_BIP, Batter == 'Lanzilli, Chris')
 
 colnames(LC)
 
-library(dplyr)
+
 LC %>%
   select(PitchCall, Direction, Distance) %>%
   head()
@@ -141,6 +67,21 @@ LC_BIP %>%
 
 summary(LC_BIP$hc_x)
 summary(LC_BIP$hc_y)
+```
+
+```{r}
+LC_R = subset(LC_BIP, PitcherThrows == 'Right')
+LC_L = subset(LC_BIP, PitcherThrows == 'Left')
+
+LC_R_FB = subset(LC_R, TaggedPitchType == 'Fastball')
+LC_R_CB = subset(LC_R, TaggedPitchType == 'Curveball')
+LC_R_SL = subset(LC_R, TaggedPitchType == 'Slider')
+LC_R_CH = subset(LC_R, TaggedPitchType == 'ChangeUp')
+
+LC_L_FB = subset(LC_L, TaggedPitchType == 'Fastball')
+LC_L_CB = subset(LC_L, TaggedPitchType == 'Curveball')
+LC_L_SL = subset(LC_L, TaggedPitchType == 'Slider')
+LC_L_CH = subset(LC_L, TaggedPitchType == 'ChangeUp')
 
 spray_chart = function(...){
   ggplot(...) + 
@@ -153,16 +94,87 @@ spray_chart = function(...){
     scale_y_continuous(NULL, limits = c(-25,500))
 }
 
-library(ggplot2)
-spray_chart(LC_BIP, aes(x = hc_x2, y = hc_y, color = PlayResult)) +
+spray_chart = spray_chart(LC_BIP, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
   scale_color_hue()
+
+
+spray_chart = function(...){
+  ggplot(...) + 
+    geom_curve(x = -225, xend = 225, y = 310, yend = 300, curvature = -0.45) + 
+    geom_segment(x = -225, xend = 0, y = 310, yend = 0) +
+    geom_segment(x =  225, xend = 0, y = 300, yend = 0) + 
+    geom_curve(x = -65, xend = 65, y = 95, yend = 95, curvature = -0.50, linetype = "dotted") +
+    coord_fixed() +
+    scale_x_continuous(NULL, limits = c(-300,300)) + 
+    scale_y_continuous(NULL, limits = c(-25,500))
+}
+spray_chart_right = spray_chart(LC_R, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart = function(...){
+  ggplot(...) + 
+    geom_curve(x = -225, xend = 225, y = 310, yend = 300, curvature = -0.45) + 
+    geom_segment(x = -225, xend = 0, y = 310, yend = 0) +
+    geom_segment(x =  225, xend = 0, y = 300, yend = 0) + 
+    geom_curve(x = -65, xend = 65, y = 95, yend = 95, curvature = -0.50, linetype = "dotted") +
+    coord_fixed() +
+    scale_x_continuous(NULL, limits = c(-300,300)) + 
+    scale_y_continuous(NULL, limits = c(-25,500))
+}
+
+spray_chart_left = spray_chart(LC_L, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_R_FB = spray_chart(LC_R_FB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_R_CB = spray_chart(LC_R_CB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_R_SL = spray_chart(LC_R_SL, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_R_CH = spray_chart(LC_R_CH, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_L_FB = spray_chart(LC_L_FB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_L_CB = spray_chart(LC_L_CB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_L_SL = spray_chart(LC_L_SL, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+spray_chart_L_CH = spray_chart(LC_L_CH, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+  geom_point() +
+  scale_color_hue()
+
+
+
+
+
+spray_chart()
+spray_chart_right
+spray_chart_left 
+spray_chart_R_FB
+spray_chart_R_CB
+spray_chart_R_SL
+spray_chart_R_CH
+spray_chart_L_FB
+spray_chart_L_CB
+spray_chart_L_SL
+spray_chart_L_CH
+
 ```
-```
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
