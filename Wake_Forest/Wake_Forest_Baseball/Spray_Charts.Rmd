@@ -94,9 +94,10 @@ spray_chart = function(...){
     scale_y_continuous(NULL, limits = c(-25,500))
 }
 
-spray_chart = spray_chart(LC_BIP, aes(x = hc_x, y = hc_y, color = PlayResult)) +
+all_spray_chart = spray_chart(LC_BIP, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs All')
 
 
 spray_chart = function(...){
@@ -111,7 +112,8 @@ spray_chart = function(...){
 }
 spray_chart_right = spray_chart(LC_R, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Right')
 
 spray_chart = function(...){
   ggplot(...) + 
@@ -126,45 +128,54 @@ spray_chart = function(...){
 
 spray_chart_left = spray_chart(LC_L, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Left')
 
 spray_chart_R_FB = spray_chart(LC_R_FB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Righty Fastballs')
 
 spray_chart_R_CB = spray_chart(LC_R_CB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Righty Curveballs')
 
 spray_chart_R_SL = spray_chart(LC_R_SL, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Righty Sliders')
 
 spray_chart_R_CH = spray_chart(LC_R_CH, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Righty Changeups')
 
 spray_chart_L_FB = spray_chart(LC_L_FB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Lefty Fastballs')
 
 spray_chart_L_CB = spray_chart(LC_L_CB, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Lefty Curveballs')
 
 spray_chart_L_SL = spray_chart(LC_L_SL, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Lefty Sliders')
 
 spray_chart_L_CH = spray_chart(LC_L_CH, aes(x = hc_x, y = hc_y, color = PlayResult)) +
   geom_point() +
-  scale_color_hue()
+  scale_color_hue()+
+  ggtitle('Spray Chart vs Lefty Changeups')
 
 
 
 
 
-spray_chart()
+all_spray_chart
 spray_chart_right
 spray_chart_left 
 spray_chart_R_FB
