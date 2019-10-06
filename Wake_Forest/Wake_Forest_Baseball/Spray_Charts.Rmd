@@ -3,10 +3,10 @@ title: "Spray Charts"
 author: "AA"
 date: "9//2019"
 output:
-  word_document: default
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
+  word_document: default
 ---
 ```{r}
 library(dplyr)

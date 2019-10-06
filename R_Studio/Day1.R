@@ -5,7 +5,7 @@ library(baseballr)
 
 # Each pitch thrown to Carlos Correa during May 2017
 Correa = scrape_statcast_savant(start_date = "2017-05-01", end_date = "2017-05-31", playerid = 621043, player_type = "batter")
-
+scrape
 # Location of batted balls : hc_x & hc_y
 Correa %>%
   select(events, hc_x, hc_y) %>%
