@@ -13,6 +13,7 @@ install.packages('tidyverse')
 library(tidyverse)
 library(baseballr)
 library(readr)
+library(dplyr)
 ```
 
 
@@ -345,6 +346,55 @@ sc2 <- rbind(s15, s16, s17, s18, s19, s20, s21,
 
 statcast_2015 <- rbind(sc1, sc2)
 write_csv(statcast_2015, "statcast2015.csv")
+```
+```{r}
+statcast = rbind(statcast2015, statcast_2016, statcast_2017, statcast_2018, statcast_2019)
+summary(statcast)
+```
+
+Setting up 2019 dataset
+```{r}
+statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2019.csv")
+
+summary(statcast2019)
+
+data = statcast2019[ ,c("type" ,"events","launch_speed", "launch_angle")]
+
+# only X
+unique(data$type)
+
+data = subset(data, type == 'X')
+
+# only GIDP, field_out, single, double, home_run, triple, force_out, triple, double_play, fielders_choice_out, fielders_choice, sac_fly_double_play, triple_play, sac_bunt_double_play
+
+# Only groundout, flyout, single, double, triple, home run
+
+unique(data$events)
+
+
+
+# Filter by outs
+data_outs = data %>%
+  filter(events == c('grounded_into_double_play',"field_out", "force_out","fielders_choice_out", "sac_fly_double_play", "triple_play", "sac_bunt_double_play"))
+
+# Filter by singles, doubles, triples
+data_base_hits = data %>%
+  filter(events == c("single", "double", "triple"))
+
+# Filter by homeruns
+data_homeruns = data %>%
+  filter(events == c("home_run"))
+
+data_outs['events'] = "Out"
+unique(data_outs$events)
+
+data = rbind(data_outs, data_base_hits, data_homeruns)
+
+unique(data$events)
+
+```
+Training & Testing for events
+```{r}
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
