@@ -14,6 +14,7 @@ library(tidyverse)
 library(baseballr)
 library(readr)
 library(dplyr)
+library(ggplot2)
 ```
 
 
@@ -358,43 +359,147 @@ statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio
 
 summary(statcast2019)
 
-data = statcast2019[ ,c("type" ,"events","launch_speed", "launch_angle")]
+data_2019 = statcast2019[ ,c("type" ,"events","launch_speed", "launch_angle", "hit_distance_sc")]
 
 # only X
-unique(data$type)
+unique(data_2019$type)
 
-data = subset(data, type == 'X')
+data_2019 = subset(data_2019, type == 'X')
 
 # only GIDP, field_out, single, double, home_run, triple, force_out, triple, double_play, fielders_choice_out, fielders_choice, sac_fly_double_play, triple_play, sac_bunt_double_play
 
 # Only groundout, flyout, single, double, triple, home run
 
-unique(data$events)
+unique(data_2019$events)
 
 
 
 # Filter by outs
-data_outs = data %>%
+data_2019_outs = data_2019 %>%
   filter(events == c('grounded_into_double_play',"field_out", "force_out","fielders_choice_out", "sac_fly_double_play", "triple_play", "sac_bunt_double_play"))
 
 # Filter by singles, doubles, triples
-data_base_hits = data %>%
+data_2019_base_hits = data_2019 %>%
   filter(events == c("single", "double", "triple"))
+data_2019_base_hits['events'] = 'Base Hit'
 
 # Filter by homeruns
-data_homeruns = data %>%
+data_2019_homeruns = data_2019 %>%
   filter(events == c("home_run"))
+data_2019_homeruns['events'] = "Home Run"
 
-data_outs['events'] = "Out"
-unique(data_outs$events)
+data_2019_outs['events'] = "Out"
+unique(data_2019_outs$events)
 
-data = rbind(data_outs, data_base_hits, data_homeruns)
+data_2019 = rbind(data_2019_outs, data_2019_base_hits, data_2019_homeruns)
 
-unique(data$events)
+unique(data_2019$events)
 
 ```
-Training & Testing for events
+
+Testing
 ```{r}
+out = data_2019 %>%
+  filter(events == 'Out')
+
+head_out = head(out)
+
+hit = data_2019 %>%
+  filter(events == 'Base Hit')
+
+head_hit = head(hit)
+
+hr = data_2019 %>%
+  filter(events == 'Home Run')
+
+head_hr = head(hr)
+
+```
+
+Visual for Launch Angle vs Hit Speed (Color Coded for Out, Hit, HomeRun)
+```{r}
+plot = ggplot(data_2019, aes(x = launch_speed, y = launch_angle, col = events))+
+  geom_point()+
+  xlim(25,125)+
+  ggtitle('2019 Season Batted Balls')
+
+ggsave('plot_2019.png')
+
+plot
+```
+```{r}
+statcast2018 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2018.csv")
+
+summary(statcast2018)
+
+data_2018 = statcast2018[ ,c("type" ,"events","launch_speed", "launch_angle", "hit_distance_sc")]
+
+# only X
+unique(data_2018$type)
+
+data_2018 = subset(data_2018, type == 'X')
+
+# only GIDP, field_out, single, double, home_run, triple, force_out, triple, double_play, fielders_choice_out, fielders_choice, sac_fly_double_play, triple_play, sac_bunt_double_play
+
+# Only groundout, flyout, single, double, triple, home run
+
+unique(data_2018$events)
+
+
+
+# Filter by outs
+data_2018_outs = data_2018 %>%
+  filter(events == c('grounded_into_double_play',"field_out", "force_out","fielders_choice_out", "sac_fly_double_play", "triple_play", "sac_bunt_double_play"))
+
+# Filter by singles, doubles, triples
+data_2018_base_hits = data_2018 %>%
+  filter(events == c("single", "double", "triple"))
+data_2018_base_hits['events'] = 'Base Hit'
+
+# Filter by homeruns
+data_2018_homeruns = data_2018 %>%
+  filter(events == c("home_run"))
+data_2018_homeruns['events'] = "Home Run"
+
+data_2018_outs['events'] = "Out"
+unique(data_2018_outs$events)
+
+data_2018 = rbind(data_2018_outs, data_2018_base_hits, data_2018_homeruns)
+
+unique(data_2018$events)
+
+```
+
+Testing
+```{r}
+out = data_2018 %>%
+  filter(events == 'Out')
+
+head_out = head(out)
+
+hit = data_2018 %>%
+  filter(events == 'Base Hit')
+
+head_hit = head(hit)
+
+hr = data_2018 %>%
+  filter(events == 'Home Run')
+
+head_hr = head(hr)
+
+```
+
+Visual for Launch Angle vs Hit Speed (Color Coded for Out, Hit, HomeRun)
+```{r}
+plot = ggplot(data_2018, aes(x = launch_speed, y = launch_angle, col = events))+
+  geom_point()+
+  xlim(25,125)+
+  ggtitle("2018 Season Batted Balls")
+
+ggsave('plot_2018.png')
+
+plot
+```
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
