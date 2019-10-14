@@ -10,11 +10,15 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 ```{r}
 devtools::install_github("BillPetti/baseballr")
 install.packages('tidyverse')
+install.packages('gam')
 library(tidyverse)
 library(baseballr)
 library(readr)
 library(dplyr)
 library(ggplot2)
+library(caTools)
+library(gam)
+
 ```
 
 
@@ -355,11 +359,11 @@ summary(statcast)
 
 Setting up 2019 dataset
 ```{r}
-statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2019.csv")
+#statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2019.csv")
 
-summary(statcast2019)
 
-data_2019 = statcast2019[ ,c("type" ,"events","launch_speed", "launch_angle", "hit_distance_sc")]
+
+data_2019 = statcast2019[ ,c("player_name","type" ,"events","launch_speed", "launch_angle", "hit_distance_sc")]
 
 # only X
 unique(data_2019$type)
@@ -414,6 +418,8 @@ hr = data_2019 %>%
 
 head_hr = head(hr)
 
+summary(hr)
+
 ```
 
 Visual for Launch Angle vs Hit Speed (Color Coded for Out, Hit, HomeRun)
@@ -427,6 +433,65 @@ ggsave('plot_2019.png')
 
 plot
 ```
+
+TRAINING AND TESTING:
+
+
+```{r}
+data_2019$outcome = ifelse(data_2019$events == c("Base Hit", "Home Run"),1,0)
+data_2019$hr = ifelse(data_2019$events == "Home Run",1,0)
+
+data_for_predict = data_2019[,c("launch_speed","launch_angle","hit_distance_sc","outcome","hr")]
+
+
+
+data_for_predict = na.exclude(data_for_predict)
+
+set.seed(123)
+sample = sample.split(data_for_predict,SplitRatio = 0.75)
+train1 =subset(data_for_predict,sample ==TRUE)
+test1 = subset(data_for_predict,sample == FALSE)
+```
+
+GAM model:
+```{r}
+unique(data_for_predict$outcome)
+
+
+fit <- gam(outcome ~ s(launch_angle, launch_speed, hit_distance_sc),
+             family = binomial,
+             data = data_for_predict)
+
+Prob_Hit = exp(predict(fit))/(1 + exp(predict(fit)))
+
+p2 <- ggplot(data_for_predict, aes(x = data_for_predict$launch_speed, y = data_for_predict$launch_angle,
+color = Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Hit Probability"))
+p2
+
+ggsave("hit_prob.png")
+  
+```
+
+```{r}
+unique(data_for_predict$hr)
+
+fit <- gam(hr ~ s(launch_angle, launch_speed,hit_distance_sc),
+             family = binomial,
+             data = data_for_predict)
+
+Prob_Hr = exp(predict(fit))/(1 + exp(predict(fit)))
+
+p2 <- ggplot(data_for_predict, aes(x = data_for_predict$launch_speed, y = data_for_predict$launch_angle,
+color = Prob_Hr)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
+low = "blue", high = "red") + geom_hline(yintercept = 0, color = "blue") + ggtitle(paste("Reach Base Probabilities"))
+p2
+
+ggsave("hr_prob.png")
+```
+
+
+
 ```{r}
 statcast2018 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2018.csv")
 
@@ -500,6 +565,94 @@ ggsave('plot_2018.png')
 
 plot
 ```
+
+Postseason Graph
+```{r}
+
+postseason_2019 <- read_csv("postseason_2019_l.csv")
+
+postseason_2019 = postseason_2019[ ,c("type" ,"events","launch_speed", "launch_angle", "hit_distance_sc",'des')]
+
+
+
+
+
+
+# Filter by outs
+postseason_2019_outs = postseason_2019 %>%
+  filter(events == c('grounded_into_double_play',"field_out", "force_out","fielders_choice_out", "sac_fly_double_play", "triple_play", "sac_bunt_double_play"))
+
+# Filter by singles, doubles, triples
+postseason_2019_base_hits = postseason_2019 %>%
+  filter(events == c("single", "double", "triple"))
+postseason_2019_base_hits['events'] = 'Base Hit'
+
+# Filter by homeruns
+postseason_2019_homeruns = postseason_2019 %>%
+  filter(events == c("home_run"))
+postseason_2019_homeruns['events'] = "Home Run"
+
+postseason_2019_outs['events'] = "Out"
+unique(postseason_2019_outs$events)
+
+postseason_2019 = rbind(postseason_2019_outs, postseason_2019_base_hits, postseason_2019_homeruns)
+
+unique(postseason_2019$events)
+
+out = postseason_2019 %>%
+  filter(events == 'Out')
+
+head_out = head(out)
+
+hit = postseason_2019 %>%
+  filter(events == 'Base Hit')
+
+head_hit = head(hit)
+
+hr = postseason_2019 %>%
+  filter(events == 'Home Run')
+
+head_hr = head(hr)
+
+summary(hr)
+
+typeof(postseason_2019$events)
+
+
+postseason_2019$launch_speed <- as.numeric(as.character(postseason_2019$launch_speed))
+postseason_2019$launch_angle <- as.numeric(as.character(postseason_2019$launch_angle))
+postseason_2019$hit_distance_sc <- as.numeric(as.character(postseason_2019$hit_distance_sc))
+
+
+view(postseason_2019)
+plot = ggplot(postseason_2019, aes(x = launch_speed, y = launch_angle, col = events))+
+  geom_point()+
+  xlim(25,125)+
+  ggtitle("2019 Postseason Season Batted Balls")
+
+plot
+
+ggsave('plot_2019_p.png')
+
+```
+Comparing 2019 & Postseason
+
+```{r}
+# average LA and LS for HR in 2019 P
+
+
+postseason_hrs = postseason_hrs[ ,c("type" ,"events","launch_speed", "launch_angle", "hit_distance_sc")]
+
+summary(postseason_hrs)
+
+```
+GAM
+```{r}
+
+```
+
+```
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
