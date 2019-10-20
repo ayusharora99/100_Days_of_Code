@@ -64,6 +64,7 @@ fit <- gam(outcome ~ s(ExitSpeed, Angle), family = binomial,
 data = allpitch1)
 
 allpitch2 <- mutate(allpitch1,
+      
 Prob_Hit = exp(predict(fit))/(1 + exp(predict(fit))))
 
 p2 <- ggplot(allpitch2, aes(x = allpitch2$ExitSpeed, y = allpitch2$Angle,

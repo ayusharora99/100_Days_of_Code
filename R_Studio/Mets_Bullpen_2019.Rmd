@@ -1,0 +1,88 @@
+---
+title: "2019 Mets Bullpen Analysis"
+output: html_notebook
+---
+```{r}
+library(dplyr)
+```
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Import 
+```{r}
+mets = read.csv('mets_bullpen_2019.csv')
+
+summary(mets)
+
+colnames(mets)
+```
+Right/Left Split
+```{r}
+mets_RHH = mets %>%
+  filter(stand == "R")
+
+mets_LHH = mets %>%
+  filter(stand == "L")
+
+
+```
+
+```{r}
+mets_RHH_outs = mets_RHH %>%
+  filter(events != c("single","double","triple", "home_run"))
+mets_RHH_outs['events'] = "Out"
+
+# Filter by singles, doubles, triples
+mets_RHH_base_hits = mets_RHH %>%
+  filter(events == c("single", "double", "triple"))
+mets_RHH_base_hits['events'] = 'Base Hit'
+
+# Filter by homeruns
+mets_RHH_homeruns = mets_RHH %>%
+  filter(events == c("home_run"))
+mets_RHH_homeruns['events'] = "Home Run"
+
+mets_RHH = rbind(mets_RHH_outs, mets_RHH_base_hits, mets_RHH_homeruns)
+
+unique(mets_RHH$events)
+
+```
+
+```{r}
+
+mets_LHH
+mets_LHH_outs = mets_LHH %>%
+  filter(events  != c("single","double","triple", "home_run"))
+mets_LHH_outs['events'] = "Out"
+
+# Filter by singles, doubles, triples
+mets_LHH_base_hits = mets_LHH %>%
+  filter(events == c("single", "double", "triple"))
+mets_LHH_base_hits['events'] = 'Base Hit'
+
+# Filter by homeruns
+mets_LHH_homeruns = mets_LHH %>%
+  filter(events == c("home_run"))
+mets_LHH_homeruns['events'] = "Home Run"
+
+mets_LHH = rbind(mets_LHH_outs, mets_LHH_base_hits, mets_LHH_homeruns)
+
+unique(mets_LHH$events)
+
+
+```
+
+```{r}
+prop.table(table(mets_RHH$events))
+
+prop.table(table(mets_LHH$events))
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

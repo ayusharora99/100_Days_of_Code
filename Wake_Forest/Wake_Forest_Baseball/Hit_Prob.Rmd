@@ -59,7 +59,7 @@ correlation_coeff_p
 correlation_coeff_k
 correlation_coeff_s
 ```
-
+Graph exit velocity vs launch angle with size as spin and color as event: 
 ```{r}
 
 ```

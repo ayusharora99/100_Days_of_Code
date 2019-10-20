@@ -359,7 +359,7 @@ summary(statcast)
 
 Setting up 2019 dataset
 ```{r}
-#statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2019.csv")
+statcast2019 <- read.csv("~/Documents/100_Days_of_Code/100_Days_of_Code/R_Studio/statcast2019.csv")
 
 
 
@@ -463,6 +463,8 @@ fit <- gam(outcome ~ s(launch_angle, launch_speed, hit_distance_sc),
              data = data_for_predict)
 
 Prob_Hit = exp(predict(fit))/(1 + exp(predict(fit)))
+
+
 
 p2 <- ggplot(data_for_predict, aes(x = data_for_predict$launch_speed, y = data_for_predict$launch_angle,
 color = Prob_Hit)) + geom_point() + scale_colour_gradient(limits = c(0, 1),
@@ -646,9 +648,26 @@ postseason_hrs = postseason_hrs[ ,c("type" ,"events","launch_speed", "launch_ang
 summary(postseason_hrs)
 
 ```
-GAM
-```{r}
 
+Comparing 2019 to 2019 Postseason:
+```{r}
+data_2019_90 = data_2019 %>%
+  filter((launch_speed >= 98 & launch_angle >= 26 & launch_angle <= 30) | (launch_speed >= 99 & launch_angle >= 25 & launch_angle <= 31) | (launch_speed >= 100 & launch_angle >= 24 & launch_angle <= 32))
+
+postseason_2019_90 = postseason_2019 %>%
+  filter((launch_speed >= 98 & launch_angle >= 26 & launch_angle <= 30) | (launch_speed >= 99 & launch_angle >= 25 & launch_angle <= 31) | (launch_speed >= 100 & launch_angle >= 24 & launch_angle <= 32))
+
+prop.table(table(data_2019_90$events))
+prop.table(table(postseason_2019_90$events))
+
+summary(data_2019_90$hit_distance_sc)
+summary(postseason_2019_90$hit_distance_sc)
+
+
+data_Didi = data_2019 %>%
+  filter(launch_speed <= 100 & launch_angle >= 41)
+
+prop.table(table(data_Didi$events))
 ```
 
 ```

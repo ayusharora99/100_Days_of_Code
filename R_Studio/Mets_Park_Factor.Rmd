@@ -1,0 +1,134 @@
+---
+title: "Mets Park Factors"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+```{r}
+library(dplyr)
+```
+
+```{r}
+trackman_mets = read.csv('park_factors.csv')
+colnames(trackman_mets)
+```
+
+Bucket by Venue:
+
+```{r}
+unique(trackman_mets$venueid)
+typeof(trackman_mets$venueid)
+
+overview = trackman_mets %>%
+  group_by(venueid) %>%
+  summarize(mean_rel_speed = mean(tm_rel_speed, na.rm = TRUE), 
+            mean_spin_rate = mean(tm_spin_rate, na.rm = TRUE),
+            mean_spin_axis = mean(tm_spin_axis, na.rm = TRUE),
+            mean_vert_rel_angle = mean(tm_vert_rel_angle, na.rm = TRUE),
+            mean_horz_rel_angle = mean(tm_horz_rel_angle, na.rm = TRUE),
+            mean_rel_height = mean(tm_rel_height, na.rm = TRUE),
+            mean_rel_side = mean(tm_rel_side, na.rm = TRUE),
+            mean_extension = mean(tm_extension, na.rm = TRUE),
+            mean_IVB = mean(tm_induced_vert_break, na.rm = TRUE),
+            mean_HB = mean(tm_horz_break, na.ram = TRUE),
+            mean_px = mean(px, na.rm = TRUE),
+            mean_pz = mean(pz, na.rm = TRUE))
+```
+True Mean and Variance to create a base:
+```{r}
+rel_speed_true_mean = mean(overview$mean_rel_speed)
+spin_rate_true_mean = mean(overview$mean_spin_rate)
+spin_axis_true_mean = mean(overview$mean_spin_axis)
+vert_rel_angle_true_meane = mean(overview$mean_vert_rel_angle)
+horz_rel_angle_true_mean = mean(overview$mean_horz_rel_angle)
+rel_height_true_mean = mean(overview$mean_rel_height)
+rel_side_true_mean = mean(overview$mean_rel_side)
+extension_true_mean = mean(overview$mean_extension)
+IVB_true_mean = mean(overview$mean_IVB)
+HB_true_mean = mean(overview$mean_HB)
+px_true_mean = mean(overview$mean_px)
+pz_true_mean = mean(overview$mean_pz)
+
+rel_speed_true_variance = max(overview$mean_rel_speed) - min(overview$mean_rel_speed)
+spin_rate_true_variance = max(overview$mean_spin_rate) - min(overview$mean_spin_rate) 
+spin_axis_true_variance = max(overview$mean_spin_axis) - min(overview$mean_spin_axis)  
+vert_rel_angle_variance = max(overview$mean_vert_rel_angle) - min(overview$mean_vert_rel_angle) 
+horz_rel_angle_true_variance = max(overview$mean_horz_rel_angle) - min(overview$mean_horz_rel_angle) 
+rel_height_true_variance = max(overview$mean_rel_height) - min(overview$mean_rel_height) 
+rel_side_true_variance = max(overview$mean_rel_side) - min(overview$mean_rel_side) 
+extension_true_variance = max(overview$mean_extension) - min(overview$mean_extension) 
+IVB_true_variance = max(overview$mean_IVB) - min(overview$mean_IVB)
+HB_true_vaiance = max(overview$mean_HB) - min(overview$mean_HB) 
+px_true_variance = max(overview$mean_px) - min(overview$mean_px) 
+pz_true_varaince = max(overview$mean_pz) - min(overview$mean_pz)  
+
+rel_speed_true_SD = sd(overview$mean_rel_speed)
+spin_rate_true_SD = sd(overview$mean_spin_rate)
+spin_axis_true_SD = sd(overview$mean_spin_axis)
+vert_rel_angle_SD = sd(overview$mean_vert_rel_angle)
+horz_rel_angle_true_SD = sd(overview$mean_horz_rel_angle)
+rel_height_true_SD = sd(overview$mean_rel_height)
+rel_side_true_SD = sd(overview$mean_rel_side)
+extension_true_SD = sd(overview$mean_extension)
+IVB_true_SD = sd(overview$mean_IVB)
+HB_true_SD = sd(overview$mean_HB)
+px_true_SD = sd(overview$mean_px)
+pz_true_SD  = sd(overview$mean_pz)
+
+table = data.frame("Key" = c("True_Mean","True_Variance", "True_SD"),
+                   "mean_rel_speed" = c(rel_speed_true_mean,rel_speed_true_variance, rel_speed_true_SD), 
+                   "mean_spin_rate" = c(spin_rate_true_mean,spin_rate_true_variance,spin_rate_true_SD), 
+                   "mean_spin_axis" = c(spin_axis_true_mean,spin_axis_true_variance,spin_axis_true_SD),
+                   "mean_vert_rel_angle"= c(vert_rel_angle_true_meane,vert_rel_angle_variance,vert_rel_angle_SD),
+                   "mean_horz_rel_angle"= c(horz_rel_angle_true_mean,horz_rel_angle_true_variance,horz_rel_angle_true_SD),
+                   "mean_rel_height" = c(rel_height_true_mean,rel_height_true_variance,rel_height_true_SD),
+                   "mean_rel_side" = c(rel_side_true_mean,rel_side_true_variance,rel_side_true_SD),
+                   "mean_extension"= c(extension_true_mean,extension_true_variance,extension_true_SD),
+                   "mean_IVB"= c(IVB_true_mean,IVB_true_variance,IVB_true_SD),
+                   "mean_HB"= c(HB_true_mean,HB_true_vaiance,HB_true_SD),
+                   "mean_px" = c(px_true_mean,px_true_variance,px_true_SD),
+                   "mean_pz" = c(pz_true_mean,pz_true_varaince,pz_true_SD))
+
+
+```
+
+Z-score for each venue's column
+```{r}
+z_score_table = data.frame("Venue" = c(overview$venueid))
+
+for (row in 1:nrow(overview)){
+  for(column in c("mean_rel_speed", "mean_spin_rate","mean_spin_axis","mean_vert_rel_angle","mean_horz_rel_angle","mean_rel_height","mean_rel_side","mean_extension","mean_IVB","mean_HB","mean_px","mean_pz")){
+    z_score_table[row,column] = ((overview[row,column] - table[1, column]) / table[3,column])
+  }
+}
+```
+
+
+Formula to create a single park factor that weights certain features (relside, relheight, extension) more so than others 
+```{r}
+
+z_score_table = subset(z_score_table, select = c("Venue","mean_rel_speed", "mean_spin_rate","mean_spin_axis","mean_vert_rel_angle","mean_horz_rel_angle","mean_rel_height","mean_rel_side","mean_extension","mean_IVB","mean_px","mean_pz") )
+for (row in 1:nrow(z_score_table)){
+  z_score_table[row,"park_factor"] = (sum(z_score_table[row,c("mean_rel_speed", "mean_spin_rate","mean_spin_axis","mean_vert_rel_angle","mean_horz_rel_angle","mean_rel_height","mean_rel_side","mean_extension","mean_IVB","mean_px","mean_pz")]))
+}
+
+names(z_score_table) = c("venueid","z_rel_speed", "z_spin_rate","z_spin_axis","z_vert_rel_angle","z_horz_rel_angle","z_rel_height","z_rel_side","z_extension","z_IVB","z_px","z_pz", "park_factor")
+```
+
+```{r}
+final_table = merge(overview,z_score_table, by = "venueid")
+
+final_table = final_table[,c("venueid","park_factor", "mean_rel_speed","z_rel_speed","mean_spin_rate","z_spin_rate","mean_spin_axis","z_spin_axis","mean_vert_rel_angle","z_vert_rel_angle","mean_horz_rel_angle","z_horz_rel_angle","mean_rel_height","z_rel_height","mean_rel_side","z_rel_side","mean_extension","z_extension","mean_IVB","z_IVB","mean_px","z_px","mean_pz","z_pz")]
+
+
+write.csv(final_table, 'nym_park_factors.csv')
+```
+ 
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
